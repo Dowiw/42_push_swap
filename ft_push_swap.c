@@ -10,7 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include <stdio.h> // printf only
+
+#include <unistd.h> // write, malloc
+#include <stdlib.h> // malloc, free, exit
+
+// libft authorized and ft_printf
 
 /**
  * Parameters:
@@ -47,6 +52,16 @@
  * - if only executing? : ./push_swap
  *   - stops and does nothing (return to prompt)
  */
-int main() {
-	printf("Hello World!");
+
+static int	write_error() {
+	write(STDERR_FILENO, "Error\n", 6);
+	return (1);
 }
+
+// int argc, char **argv
+int main(void) {
+	return (write_error());
+}
+
+
+
