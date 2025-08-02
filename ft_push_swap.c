@@ -3,17 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   ft_push_swap.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: kmonjard <kmonjard@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 09:57:59 by kmonjard          #+#    #+#             */
-/*   Updated: 2025/07/31 11:36:22 by kmonjard         ###   ########.fr       */
+/*   Updated: 2025/08/02 20:29:51 by kmonjard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <stdio.h> // printf only
-
-#include <unistd.h> // write, malloc
-#include <stdlib.h> // malloc, free, exit
 
 // libft authorized and ft_printf
 
@@ -51,16 +46,29 @@
  * - if only one number in stack?
  * - if only executing? : ./push_swap
  *   - stops and does nothing (return to prompt)
+ *
+ * Remember:
+ * - You have 2 stacks
+ * -
  */
 
+#include <stdio.h> // printf only
+
+#include <unistd.h> // write, malloc
+#include <stdlib.h> // malloc, free, exit
+
+// function to write error to STDERR
 static int	write_error() {
 	write(STDERR_FILENO, "Error\n", 6);
-	return (1);
+	exit(EXIT_FAILURE);
 }
 
 // int argc, char **argv
-int main(void) {
-	return (write_error());
+int main(int argc, char **argv) {
+	if (argc <= 1)
+		return (write_error());
+	
+	return (0);
 }
 
 
