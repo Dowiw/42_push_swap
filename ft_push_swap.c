@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   ft_push_swap.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmonjard <kmonjard@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 09:57:59 by kmonjard          #+#    #+#             */
-/*   Updated: 2025/08/02 20:29:51 by kmonjard         ###   ########.fr       */
+/*   Updated: 2025/08/06 11:00:42 by kmonjard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stdio.h> // printf only
+
+#include <unistd.h> // write, malloc
+#include <stdlib.h> // malloc, free, exit
+
+#include "headers/ft_push_swap.h"
 
 // libft authorized and ft_printf
 
@@ -46,30 +53,31 @@
  * - if only one number in stack?
  * - if only executing? : ./push_swap
  *   - stops and does nothing (return to prompt)
- *
- * Remember:
- * - You have 2 stacks
- * -
  */
 
-#include <stdio.h> // printf only
+int	check_valid_args(char **av)
+{
+	if (av[i][j] = '\0')
+		reut
+}
 
-#include <unistd.h> // write, malloc
-#include <stdlib.h> // malloc, free, exit
-
-// function to write error to STDERR
-static int	write_error() {
-	write(STDERR_FILENO, "Error\n", 6);
-	exit(EXIT_FAILURE);
+/*
+ * Function that writes `"Error\n"` to STDERR.
+ * Frees the allocated stacks.
+ * And terminates the program with exit(EXIT_FAILURE)
+ */
+void	error_free_exit(t_stack **stack_a, t_stack **stack_b)
+{
+	if (stack_a && stack_b)
 }
 
 // int argc, char **argv
-int main(int argc, char **argv) {
-	if (argc <= 1)
-		return (write_error());
-	
-	return (0);
+int main(int ac, char **av) {
+	t_stack	*stack_a;
+	t_stack	*stack_b;
+
+	if (ac < 2)
+		return (0);
+	else (!check_valid_args(av))
+
 }
-
-
-
