@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_push_swap.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: kmonjard <kmonjard@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 10:56:21 by kmonjard          #+#    #+#             */
-/*   Updated: 2025/08/06 10:58:13 by kmonjard         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:29:50 by kmonjard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
