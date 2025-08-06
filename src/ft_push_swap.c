@@ -146,7 +146,12 @@ int	are_valid_args(char **av)
 	return (1);
 }
 
-t_stack	*stack_new(int number)
+/**
+ * - Allocates a new node
+ * - node->number = number, index = 0, next = NULL
+ * - Returns NULL in malloc error
+ */
+t_stack	*stack_new_node(int number)
 {
 	t_stack	*node;
 
@@ -159,18 +164,30 @@ t_stack	*stack_new(int number)
 }
 
 /**
- * - Similar to stack push
- * - Puts the new node on the top
+ * - Puts node to the bottom of a stack
+ * -
  */
-void stack_push(t_stack **stack, t_stack *new_node)
+void stack_push_bottom(t_stack **stack, t_stack *new_node)
 {
-	if (!stack || !new_node)
+	t_stack *cursor;
+
+	if (!new_node)
 		return ;
-	new_node->next = *stack;
-	*stack = new_node;
+	if (!*stack)
+	{
+		*stack = new_node;
+		return ;
+	}
+	cursor = *stack;
+	while (cursor->next != NULL)
+		cursor = cursor->next;
+	cursor->next = new_node;
+	new_node->next = NULL;
 }
 
-// Helper: free the stack
+/**
+ *
+ */
 void stack_free(t_stack **stack)
 {
 	t_stack *tmp;
@@ -232,10 +249,10 @@ void	fill_stack_a(t_stack **stack_a, int ac, const char **av)
 		value = ft_atoi_pushswap(av[i], &error);
 		if (error)
 			error_free_exit(stack_a, NULL);
-		node = stack_new(value);
+		node = stack_new_node(value);
 		if (!node)
 			error_free_exit(stack_a, NULL);
-		stack_push(stack_a, node);
+		stack_push_bottom(stack_a, node);
 		i++;
 	}
 }
