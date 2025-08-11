@@ -15,7 +15,7 @@
 #include <unistd.h> // write, malloc
 #include <stdlib.h> // malloc, free, exit
 
-#include "headers/ft_push_swap.h"
+#include "../headers/ft_push_swap.h"
 
 typedef struct s_stack
 {
@@ -24,6 +24,106 @@ typedef struct s_stack
 	struct s_stack	*next;
 }					t_stack;
 
+//Helper function that helps count number of strings in s
+static size_t	count_str(char const *s, char c)
+{
+	size_t	out;
+
+	out = 0;
+	while (*s)
+	{
+		while (*s == c)
+			s++;
+		if (*s)
+			out++;
+		while (*s && *s != c)
+			s++;
+	}
+	return (out);
+}
+
+//Copies a mem_area src to another mem_area dest based on size
+static void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	size_t			i;
+	unsigned char	*src_area;
+	unsigned char	*dest_area;
+
+	i = 0;
+	if (src == NULL && dest == NULL)
+		return (dest);
+	src_area = (unsigned char *)src;
+	dest_area = (unsigned char *)dest;
+	while (i < n)
+	{
+		dest_area[i] = src_area[i];
+		i++;
+	}
+	return (dest);
+}
+
+//Helper function that puts string into out[i] from its index start to its end
+static char	*dup_str(const char *start, const char *end)
+{
+	char	*string;
+	size_t	len;
+
+	len = (size_t)end - (size_t)start;
+	string = malloc(sizeof(char) * (len + 1));
+	if (!string)
+		return (NULL);
+	ft_memcpy(string, start, len);
+	string[len] = '\0';
+	return (string);
+}
+
+//Helper function to fill array
+static int	fill_array(char **out, const char *s, char c)
+{
+	size_t		i;
+	const char	*start;
+
+	i = 0;
+	while (*s)
+	{
+		while (*s == c)
+			s++;
+		if (*s)
+		{
+			start = s;
+			while (*s && *s != c)
+				s++;
+			out[i] = dup_str(start, s);
+			if (!out[i])
+			{
+				while (i--)
+					free(out[i]);
+				return (0);
+			}
+			i++;
+		}
+	}
+	out[i] = NULL;
+	return (1);
+}
+
+//Splits str s into a mallocated array of strings based on delimiter c
+char	**ft_split(char const *s, char c)
+{
+	char	**out;
+
+	if (!s)
+		return (NULL);
+	out = malloc(sizeof(char *) * (count_str(s, c) + 1));
+	if (!out)
+		return (NULL);
+	if (!fill_array(out, s, c))
+	{
+		free(out);
+		return (NULL);
+	}
+	return (out);
+}
 
 // libft authorized and ft_printf
 
@@ -70,14 +170,29 @@ typedef struct s_stack
  */
 void	error_free_exit(t_stack **stack_a, t_stack **stack_b)
 {
-	if (stack_a && stack_b);
+	t_stack	*cursor;
+
+	cursor = NULL;
+	while (stack_a && *stack_a)
+	{
+		cursor = (*stack_a)->next;
+		free(*stack_a);
+		*stack_a = cursor;
+	}
+	while (stack_b && *stack_b)
+	{
+		cursor = (*stack_b)->next;
+		free(*stack_b);
+		*stack_b = cursor;
+	}
+	exit(EXIT_FAILURE);
 }
 
 /**
  * - Checks if character is a digit
  * - `c >= '0' && c <= '9'`
  */
-int	isdigit(char c)
+int	ft_isdigit(char c)
 {
 	if (c >= '0' && c <= '9')
 		return (1);
@@ -111,9 +226,9 @@ int	is_valid_arg(char *arg)
 			i++;
 		if (issign(arg[i]))
 			i++;
-		if (!isdigit(arg[i]))
+		if (!ft_isdigit(arg[i]))
 			return (0);
-		while (isdigit(arg[i]))
+		while (ft_isdigit(arg[i]))
 			i++;
 		if (arg[i] && arg[i] != ' ')
 			return (0);
@@ -133,6 +248,8 @@ int	are_valid_args(char **av)
 
 	i = 1;
 	j = 0;
+	if (!av[i])
+		return (0);
 	while (av[i][j] == ' ')
 		j++;
 	if (av[i][j] == '\0')
@@ -161,6 +278,7 @@ t_stack	*stack_new_node(int number)
 	node->number = number;
 	node->index = 0;
 	node->next = NULL;
+	return (node);
 }
 
 /**
@@ -204,7 +322,7 @@ void stack_free(t_stack **stack)
  * - Checks for overflow/underflow
  * - Checks for errors
  */
-int	ft_atoi_pushswap(const char *arg, int *error)
+int	ft_atoi_pushswap(char *arg, int *error)
 {
 	long	value;
 	int		sign;
@@ -214,19 +332,21 @@ int	ft_atoi_pushswap(const char *arg, int *error)
 	while (*arg == ' ')
 		arg++;
 	if (*arg == '-' || *arg == '+')
-		if (*arg++ == '-')
-			sign = -1;
+	{
+		if (*arg == '-')
+			sign *= -1;
+		arg++;
+	}
 	if (!(*arg >= '0' && *arg <= '9'))
 		*error = 1;
-	while (*arg >= '0' && *arg <= '9')
+	while ((*arg >= '0' && *arg <= '9') && *arg != '\0')
 	{
 		value = value * 10 + (*arg - '0');
 		if ((sign == 1 && value > 2147483647)
 			|| (sign == -1 && value < -2147483648))
-			*error = 1;
+				*error = 1;
+		arg++;
 	}
-	if (*arg != '\0')
-		*error = 1;
 	return ((int)(sign * value));
 }
 
@@ -235,17 +355,20 @@ int	ft_atoi_pushswap(const char *arg, int *error)
  * - Allocates node for a number (protected)
  * - Protects duplicates & int overflow/underflow
  */
-void	fill_stack_a(t_stack **stack_a, int ac, const char **av)
+void	fill_stack_a(t_stack **stack_a, int ac, char **av)
 {
 	int		i;
 	int		value;
 	int		error;
 	t_stack	*node;
 
-	i = 1;
+	i = 0;
 	error = 0;
+	node = NULL;
+	value = 0;
 	while (i < ac)
 	{
+		printf("fill stack >> i: %i, av[i]: %s\n", i, av[i]);
 		value = ft_atoi_pushswap(av[i], &error);
 		if (error)
 			error_free_exit(stack_a, NULL);
@@ -257,15 +380,78 @@ void	fill_stack_a(t_stack **stack_a, int ac, const char **av)
 	}
 }
 
-int main(int ac, char **av) {
-	t_stack	*stack_a;
-	t_stack	*stack_b;
+int main() {
+	char *test[] = {"./a.out", "1 2 3", NULL};
+	printf("test: %i\n", are_valid_args(test));
 
-	if (ac < 2)
-		return (0);
-	else if (!are_valid_args(av))
-		error_free_exit(NULL, NULL);
-	fill_stack_a(stack_a, ac, av);
-	stack_b = NULL;
-	push_swap(stack_a, stack_b);
+	char **split = ft_split("1 -2 3 -4 5 6 1231312", ' ');
+	for (int i = 0; split[i] != NULL; i++)
+	{
+		printf("num: %s\n", split[i]);
+	}
+
+	// check atoi
+	char *atoi = "111 222 333 444";
+	int error = 0;
+	for (int index = 0; atoi[index] != '\0'; index++)
+	{
+		int val = ft_atoi_pushswap(atoi, &error);
+		printf("val: %i, err: %i\n", val, error);
+	}
+
+	// check stack filler
+	t_stack *stack;
+	stack = NULL;
+	int ac = 0;
+	while (split[ac] != NULL)
+		ac++;
+	printf("number of nums (ac): %i\n", ac);
+
+	printf("Calling fill_stack_a\n");
+	fill_stack_a(&stack, ac, split);
+	printf("Returned from fill_stack_a\n");
+
+	t_stack *cursor = stack;
+	int count = 0; // debug for infinite loop
+	while (cursor != NULL)
+	{
+		printf("stack num: %i\n", cursor->number);
+		cursor = cursor->next;
+		count++;
+		if (count > 100) break ;
+	}
+
+	// free everything
+	int i = 0;
+	while (split[i] != NULL)
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+	error_free_exit(&stack, NULL);
 }
+
+// int main(int ac, char **av)
+// {
+// 	t_stack	*stack_a;
+// 	t_stack	*stack_b;
+// 	char	**temp;
+
+// 	if (ac < 2)
+// 		return (0);
+// 	else if (!are_valid_args(av))
+// 		error_free_exit(NULL, NULL);
+// 	if (ac == 2)
+// 	{
+
+// 	}
+// 	str = ft_split(av[1], ' ');
+// 	fill_stack_a(&stack_a, ac, str);
+// 	stack_b = NULL;
+// 	while (cursor->next != NULL)
+// 	{
+// 		printf("num: %i", cursor->number);
+// 		cursor = cursor->next;
+// 	}
+// }
