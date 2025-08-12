@@ -15,115 +15,9 @@
 #include <unistd.h> // write, malloc
 #include <stdlib.h> // malloc, free, exit
 
-#include "../headers/ft_push_swap.h"
+#include <limits.h>
 
-typedef struct s_stack
-{
-	int				number;
-	int				index;
-	struct s_stack	*next;
-}					t_stack;
-
-//Helper function that helps count number of strings in s
-static size_t	count_str(char const *s, char c)
-{
-	size_t	out;
-
-	out = 0;
-	while (*s)
-	{
-		while (*s == c)
-			s++;
-		if (*s)
-			out++;
-		while (*s && *s != c)
-			s++;
-	}
-	return (out);
-}
-
-//Copies a mem_area src to another mem_area dest based on size
-static void	*ft_memcpy(void *dest, const void *src, size_t n)
-{
-	size_t			i;
-	unsigned char	*src_area;
-	unsigned char	*dest_area;
-
-	i = 0;
-	if (src == NULL && dest == NULL)
-		return (dest);
-	src_area = (unsigned char *)src;
-	dest_area = (unsigned char *)dest;
-	while (i < n)
-	{
-		dest_area[i] = src_area[i];
-		i++;
-	}
-	return (dest);
-}
-
-//Helper function that puts string into out[i] from its index start to its end
-static char	*dup_str(const char *start, const char *end)
-{
-	char	*string;
-	size_t	len;
-
-	len = (size_t)end - (size_t)start;
-	string = malloc(sizeof(char) * (len + 1));
-	if (!string)
-		return (NULL);
-	ft_memcpy(string, start, len);
-	string[len] = '\0';
-	return (string);
-}
-
-//Helper function to fill array
-static int	fill_array(char **out, const char *s, char c)
-{
-	size_t		i;
-	const char	*start;
-
-	i = 0;
-	while (*s)
-	{
-		while (*s == c)
-			s++;
-		if (*s)
-		{
-			start = s;
-			while (*s && *s != c)
-				s++;
-			out[i] = dup_str(start, s);
-			if (!out[i])
-			{
-				while (i--)
-					free(out[i]);
-				return (0);
-			}
-			i++;
-		}
-	}
-	out[i] = NULL;
-	return (1);
-}
-
-//Splits str s into a mallocated array of strings based on delimiter c
-char	**ft_split(char const *s, char c)
-{
-	char	**out;
-
-	if (!s)
-		return (NULL);
-	out = malloc(sizeof(char *) * (count_str(s, c) + 1));
-	if (!out)
-		return (NULL);
-	if (!fill_array(out, s, c))
-	{
-		free(out);
-		return (NULL);
-	}
-	return (out);
-}
+#include "ft_push_swap.h"
 
 // libft authorized and ft_printf
 
@@ -188,166 +82,42 @@ void	error_free_exit(t_stack **stack_a, t_stack **stack_b)
 	exit(EXIT_FAILURE);
 }
 
-/**
- * - Checks if character is a digit
- * - `c >= '0' && c <= '9'`
- */
-int	ft_isdigit(char c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
-}
-
-/**
- * - Checks if character is a sign
- * - `c == '+' || c == '-'`
- */
-int issign(char c)
-{
-	if (c == '+' || c == '-')
-		return (1);
-	return (0);
-}
-
-/**
- * - Checker that looks for valid integers in an arg
- * - Each int: skips space ' ', a sign '+' '-' and digits
- * - Returns 0 if anything else is found
- */
-int	is_valid_arg(char *arg)
-{
-	size_t	i;
-
-	i = 0;
-	while (arg[i] != '\0')
-	{
-		while (arg[i] == ' ')
-			i++;
-		if (issign(arg[i]))
-			i++;
-		if (!ft_isdigit(arg[i]))
-			return (0);
-		while (ft_isdigit(arg[i]))
-			i++;
-		if (arg[i] && arg[i] != ' ')
-			return (0);
-	}
-	return (1);
-}
-
-/**
- * - Checks for valid arguments in ./push_swap ...
- * - Will check for ./push_swap "" (return error)
- * - Will check each argument ac > 2
- */
-int	are_valid_args(char **av)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 1;
-	j = 0;
-	if (!av[i])
-		return (0);
-	while (av[i][j] == ' ')
-		j++;
-	if (av[i][j] == '\0')
-		return (0);
-	while (av[i] != NULL)
-	{
-		if (!is_valid_arg(av[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-/**
- * - Allocates a new node
- * - node->number = number, index = 0, next = NULL
- * - Returns NULL in malloc error
- */
-t_stack	*stack_new_node(int number)
+void	push_alloc_node(t_stack **stack_a, int num)
 {
 	t_stack	*node;
 
-	node = malloc(sizeof(t_stack));
+	node = stack_new_node(num);
 	if (!node)
-		return (NULL);
-	node->number = number;
-	node->index = 0;
-	node->next = NULL;
-	return (node);
+		error_free_exit(stack_a, NULL);
+	stack_push_bottom(stack_a, node);
 }
 
-/**
- * - Puts node to the bottom of a stack
- * -
- */
-void stack_push_bottom(t_stack **stack, t_stack *new_node)
+int	parse_and_push(t_stack **stack_a, char *s, int *j)
 {
-	t_stack *cursor;
-
-	if (!new_node)
-		return ;
-	if (!*stack)
-	{
-		*stack = new_node;
-		return ;
-	}
-	cursor = *stack;
-	while (cursor->next != NULL)
-		cursor = cursor->next;
-	cursor->next = new_node;
-	new_node->next = NULL;
-}
-
-/**
- *
- */
-void stack_free(t_stack **stack)
-{
-	t_stack *tmp;
-	while (stack && *stack)
-	{
-		tmp = (*stack)->next;
-		free(*stack);
-		*stack = tmp;
-	}
-}
-
-/**
- * - Main logic for filling up the stack
- * - Checks for overflow/underflow
- * - Checks for errors
- */
-int	ft_atoi_pushswap(char *arg, int *error)
-{
-	long	value;
 	int		sign;
+	long	num;
 
-	value = 0;
 	sign = 1;
-	while (*arg == ' ')
-		arg++;
-	if (*arg == '-' || *arg == '+')
+	num = 0;
+	while (s[*j] == ' ')
+		(*j)++;
+	if (s[*j] == '-' || s[*j] == '+')
 	{
-		if (*arg == '-')
+		if (s[*j] == '-')
 			sign *= -1;
-		arg++;
+		(*j)++;
 	}
-	if (!(*arg >= '0' && *arg <= '9'))
-		*error = 1;
-	while ((*arg >= '0' && *arg <= '9') && *arg != '\0')
+	if (ft_isdigit(s[*j]))
 	{
-		value = value * 10 + (*arg - '0');
-		if ((sign == 1 && value > 2147483647)
-			|| (sign == -1 && value < -2147483648))
-				*error = 1;
-		arg++;
+		while (ft_isdigit(s[*j]))
+			num = num * 10 + (s[(*j)++] - '0');
+		num *= sign;
+		if (num < INT_MIN || num > INT_MAX)
+			error_free_exit(stack_a, NULL);
+		push_alloc_node(stack_a, num);
+		return (1);
 	}
-	return ((int)(sign * value));
+	return (0);
 }
 
 /**
@@ -357,58 +127,36 @@ int	ft_atoi_pushswap(char *arg, int *error)
  */
 void	fill_stack_a(t_stack **stack_a, int ac, char **av)
 {
-	int		i;
-	int		value;
-	int		error;
-	t_stack	*node;
+	int	i;
+	int	j;
 
-	i = 0;
-	error = 0;
-	node = NULL;
-	value = 0;
+	i = 1;
+	j = 0;
 	while (i < ac)
 	{
-		printf("fill stack >> i: %i, av[i]: %s\n", i, av[i]);
-		value = ft_atoi_pushswap(av[i], &error);
-		if (error)
-			error_free_exit(stack_a, NULL);
-		node = stack_new_node(value);
-		if (!node)
-			error_free_exit(stack_a, NULL);
-		stack_push_bottom(stack_a, node);
+		while (av[i][j])
+		{
+			if (!parse_and_push(stack_a, av[i], &j))
+				j++;
+		}
 		i++;
 	}
 }
 
 int main() {
-	char *test[] = {"./a.out", "1 2 3", NULL};
+	char *test[] = {"./a.out", "1 2 3 4 5 6 7 8 9 10", NULL};
 	printf("test: %i\n", are_valid_args(test));
-
-	char **split = ft_split("1 -2 3 -4 5 6 1231312", ' ');
-	for (int i = 0; split[i] != NULL; i++)
-	{
-		printf("num: %s\n", split[i]);
-	}
-
-	// check atoi
-	char *atoi = "111 222 333 444";
-	int error = 0;
-	for (int index = 0; atoi[index] != '\0'; index++)
-	{
-		int val = ft_atoi_pushswap(atoi, &error);
-		printf("val: %i, err: %i\n", val, error);
-	}
 
 	// check stack filler
 	t_stack *stack;
 	stack = NULL;
 	int ac = 0;
-	while (split[ac] != NULL)
+	while (test[ac] != NULL)
 		ac++;
 	printf("number of nums (ac): %i\n", ac);
 
 	printf("Calling fill_stack_a\n");
-	fill_stack_a(&stack, ac, split);
+	fill_stack_a(&stack, ac, test);
 	printf("Returned from fill_stack_a\n");
 
 	t_stack *cursor = stack;
@@ -422,13 +170,13 @@ int main() {
 	}
 
 	// free everything
-	int i = 0;
-	while (split[i] != NULL)
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
+	// int i = 0;
+	// while (test[i] != NULL)
+	// {
+	// 	free(split[i]);
+	// 	i++;
+	// }
+	// free(split);
 	error_free_exit(&stack, NULL);
 }
 
