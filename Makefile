@@ -13,34 +13,28 @@
 NAME = push_swap
 
 SRC_DIR = ./src
-C_FILES = ft_push_swap.c
+C_FILES = ft_push_swap.c parsing.c utils.c stack.c
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
 
-LIBFT_DIR = ./libft
-LIBFT = $(LIBFT_DIR)/libft.a
-
 OBJ = $(SRC:.c=.o)
+
+INCLUDES = headers
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
-all: $(LIBFT) $(NAME)
+all: $(NAME)
 
-$(LIBFT):
-	$(MAKE) -C $(LIBFT_DIR)
-
-$(NAME): $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) -I$(INCLUDES) $(OBJ) -o $(NAME)
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INCLUDES) -c $< -o $@
 
 clean:
-	$(MAKE) -C $(LIBFT_DIR) clean
 	rm -f $(OBJ)
 
 fclean: clean
-	$(MAKE) -C $(LIBFT_DIR) fclean
 	rm -f $(NAME)
 
 re: fclean all
