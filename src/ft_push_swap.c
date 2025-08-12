@@ -134,6 +134,7 @@ void	fill_stack_a(t_stack **stack_a, int ac, char **av)
 	j = 0;
 	while (i < ac)
 	{
+		j = 0;
 		while (av[i][j])
 		{
 			if (!parse_and_push(stack_a, av[i], &j))
@@ -144,20 +145,22 @@ void	fill_stack_a(t_stack **stack_a, int ac, char **av)
 }
 
 int main() {
-	char *test[] = {"./a.out", "1 2 3 4 5 6 7 8 9 10", NULL};
-	printf("test: %i\n", are_valid_args(test));
+	char *one_line[] = {"./a.out", "1 2 3 4 5 6 7 8 9 10", NULL};
+	char *mult_line[] = {"./a.out", "-1", "-300", "-500", NULL};
+	printf("one_line: %i\n", are_valid_args(one_line));
+	printf("mult line: %i\n", are_valid_args(mult_line));
 
 	// check stack filler
 	t_stack *stack;
 	stack = NULL;
 	int ac = 0;
-	while (test[ac] != NULL)
+	while (one_line[ac] != NULL)
 		ac++;
-	printf("number of nums (ac): %i\n", ac);
+	printf("number of nums (ac) for one line: %i\n", ac);
 
-	printf("Calling fill_stack_a\n");
-	fill_stack_a(&stack, ac, test);
-	printf("Returned from fill_stack_a\n");
+	printf("Calling fill_stack_a for one line\n");
+	fill_stack_a(&stack, ac, one_line);
+	printf("Returned from fill_stack_a for one line\n");
 
 	t_stack *cursor = stack;
 	int count = 0; // debug for infinite loop
@@ -169,6 +172,25 @@ int main() {
 		if (count > 100) break ;
 	}
 
+	t_stack *stack2 = NULL;
+	int argc = 0;
+	while (mult_line[argc] != NULL)
+		argc++;
+	printf("number of nums in multiple line: %i\n", argc);
+
+	printf("Calling fill_stack_a for mult line\n");
+	fill_stack_a(&stack2, argc, mult_line);
+	printf("Returned from fill_stack_a for mult line\n");
+
+	cursor = stack2;
+	int counter = 0;
+	while (cursor != NULL)
+	{
+		printf("stack mult num: %i\n", cursor->number);
+		cursor = cursor->next;
+		counter++;
+		if (counter > 100) break ;
+	}
 	// free everything
 	// int i = 0;
 	// while (test[i] != NULL)
@@ -177,7 +199,8 @@ int main() {
 	// 	i++;
 	// }
 	// free(split);
-	error_free_exit(&stack, NULL);
+	error_free_exit(&stack, &stack2);
+	return (0);
 }
 
 // int main(int ac, char **av)
