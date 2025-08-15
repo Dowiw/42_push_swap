@@ -33,7 +33,7 @@ t_stack	*stack_new_node(int number)
 
 /**
  * - Puts node to the bottom of a stack
- * -
+ * - Exits when new node is empty
  */
 void stack_push_bottom(t_stack **stack, t_stack *new_node)
 {
