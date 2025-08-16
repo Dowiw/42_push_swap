@@ -13,7 +13,7 @@
 NAME = push_swap
 
 SRC_DIR = ./src
-C_FILES = ft_push_swap.c parsing.c utils.c stack.c
+C_FILES = ft_push_swap.c parsing.c utils.c stack.c quicksort.c
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
 
 OBJ = $(SRC:.c=.o)
@@ -21,7 +21,7 @@ OBJ = $(SRC:.c=.o)
 INCLUDES = headers
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 all: $(NAME)
 

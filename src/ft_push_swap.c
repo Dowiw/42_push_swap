@@ -136,6 +136,48 @@ int	parse_and_push(t_stack **stack_a, char *s, int *j)
 }
 
 /**
+ * - Puts index into stack nodes
+ * - Does quicksort to the stack in an int array
+ */
+void	put_index(t_stack **stack_a)
+{
+	int	size;
+	int	i;
+	int	*arr;
+	t_stack	*cursor;
+
+	size = get_stack_size(stack_a);
+	i = 0;
+	cursor = *stack_a;
+	arr = (int *)malloc(sizeof(int) * size);
+	if (!arr)
+		error_free_exit(stack_a, NULL);
+	while (cursor != NULL && i < size)
+	{
+		arr[i] = cursor->number;
+		cursor = cursor->next;
+		i++;
+	}
+	quicksort(arr, 0, size - 1);
+	cursor = *stack_a;
+	while (cursor != NULL)
+	{
+		i = 0;
+		while (i < size)
+		{
+			if (cursor->number == arr[i])
+			{
+				cursor->correct_idx = i;
+				break ;
+			}
+			i++;
+		}
+		cursor = cursor->next;
+	}
+	free(arr);
+}
+
+/**
  * - Function that fills up stack A
  * - Uses parsing each arg (multiple and single)
  */
@@ -156,6 +198,8 @@ void	fill_stack_a(t_stack **stack_a, int ac, char **av)
 		}
 		i++;
 	}
+	if (*stack_a && stack_a)
+		put_index(stack_a);
 }
 
 /**
@@ -169,7 +213,7 @@ void	do_push_swap(t_stack **stack_a, t_stack **stack_b)
 }
 
 int main() {
-	char *one_line[] = {"./a.out", "1 2 3 4 5 6 7 8 9 10", NULL};
+	char *one_line[] = {"./a.out", "10 7 5 8 3 2 1 4 6 9", NULL};
 	char *mult_line[] = {"./a.out", "-300", "-300", "-500", NULL};
 	printf("one_line: %i\n", are_valid_args(one_line));
 	printf("mult line: %i\n", are_valid_args(mult_line));

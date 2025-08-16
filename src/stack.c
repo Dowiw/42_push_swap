@@ -26,7 +26,7 @@ t_stack	*stack_new_node(int number)
 	if (!node)
 		return (NULL);
 	node->number = number;
-	node->index = 0;
+	node->correct_idx = 0;
 	node->next = NULL;
 	return (node);
 }
@@ -35,7 +35,7 @@ t_stack	*stack_new_node(int number)
  * - Puts node to the bottom of a stack
  * - Exits when new node is empty
  */
-void stack_push_bottom(t_stack **stack, t_stack *new_node)
+void	stack_push_bottom(t_stack **stack, t_stack *new_node)
 {
 	t_stack *cursor;
 
@@ -51,4 +51,22 @@ void stack_push_bottom(t_stack **stack, t_stack *new_node)
 		cursor = cursor->next;
 	cursor->next = new_node;
 	new_node->next = NULL;
+}
+
+/**
+ * - Returns stack size in size_t
+ */
+int	get_stack_size(t_stack **stack)
+{
+	int	count;
+	t_stack *cursor;
+
+	count = 0;
+	cursor = *stack;
+	while (cursor != NULL)
+	{
+		cursor = cursor->next;
+		count++;
+	}
+	return (count);
 }
