@@ -1,8 +1,8 @@
-#include <stdio.h>
-
-static int partition(int *arr, int low, int high);
+static int	partition(int *arr, int low, int high);
 
 /**
+ * - Quicksort that sorts an int array
+ * - Usage: array, first_idx, last_idx
  */
 void	quicksort(int *arr, int low, int high)
 {
@@ -10,17 +10,16 @@ void	quicksort(int *arr, int low, int high)
 
 	if (low < high)
 	{
-	printf("\nlow: %i, high: %i\n", low, high);
-	partition_idx = partition(arr, low, high);
-	for (int i = 0; i < 10; i++);
-		printf("array: %i, %i, %i, %i, %i, %i, %i, %i, %i, %i\n", arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], arr[6], arr[7], arr[8], arr[9]);
-	quicksort(arr, low, partition_idx - 1);
-	printf("exiting quicksort left\n");
-	quicksort(arr, partition_idx + 1, high);
+		partition_idx = partition(arr, low, high);
+		quicksort(arr, low, partition_idx - 1);
+		quicksort(arr, partition_idx + 1, high);
 	}
 	return ;
 }
 
+/**
+ * - Helper function to do sorting in partition
+ */
 static int	partition(int *arr, int low, int high)
 {
 	int	i;
@@ -35,22 +34,20 @@ static int	partition(int *arr, int low, int high)
 	{
 		if (arr[j] <= pivot)
 		{
-			printf("arr[j]: %i, pivot: %i\n", arr[j], pivot);
 			temp = arr[i];
 			arr[i] = arr[j];
 			arr[j] = temp;
-			printf("j: %i, arr[j]: %i, i:%i arr[i]: %i\n", j, arr[j], i, arr[i]);
 			i++;
 		}
 		j++;
 	}
-	printf("OUTSIDE: i: %i, arr[i]: %i, high: %i, arr[high]: %i\n", i, arr[i], high, arr[high]);
 	temp = arr[i];
 	arr[i] = arr[high];
 	arr[high] = temp;
 	return (i);
 }
 
+/*
 int main(void)
 {
 	int arr[10] = {10, 7, 5, 8, 3, 2, 1, 4, 6, 9};
@@ -63,3 +60,4 @@ int main(void)
 	
 	return (0);
 }
+*/
