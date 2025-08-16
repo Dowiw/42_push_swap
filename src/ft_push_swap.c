@@ -207,9 +207,13 @@ void	fill_stack_a(t_stack **stack_a, int ac, char **av)
  */
 void	do_push_swap(t_stack **stack_a, t_stack **stack_b)
 {
-	(void)stack_a;
-	(void)stack_b;
-	return ;
+	int	size;
+
+	size = get_stack_size(stack_a);
+	if (size <= 5)
+		small_sort(stack_a, stack_b);
+	else
+		large_sort(stack_a, stack_b);
 }
 
 int main() {
@@ -234,11 +238,14 @@ int main() {
 	int count = 0; // debug for infinite loop
 	while (cursor != NULL)
 	{
-		printf("stack num: %i\n", cursor->number);
+		printf("stack num: %i, stack correct_idx: %i\n", cursor->number, cursor->correct_idx);
 		cursor = cursor->next;
 		count++;
 		if (count > 100) break ;
 	}
+
+	t_stack *stack_b = NULL;
+	push_swap(&stack, stack_b);
 
 	printf("Freeing stack one_line\n");
 	t_stack *temp = stack;
