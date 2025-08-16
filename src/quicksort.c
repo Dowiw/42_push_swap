@@ -31,7 +31,7 @@ static int	partition(int *arr, int low, int high)
 	i = low;
 	j = low;
 	pivot = arr[high];
-	while (j < high - low)
+	while (j < high)
 	{
 		if (arr[j] <= pivot)
 		{
