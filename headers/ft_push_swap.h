@@ -17,21 +17,39 @@ typedef struct s_stack
 {
 	int				number;
 	int				correct_idx;
+	struct s_stack	*prev;
 	struct s_stack	*next;
 }					t_stack;
 
-# include <unistd.h>
+// index.c
+void	get_index(t_stack **stack_a);
 
-int	is_valid_arg(char *arg);
-int	are_valid_args(char **av);
+// moves.c
+void	do_sa(t_stack **stack_a);
+void	do_sb(t_stack **stack_b);
 
-t_stack	*stack_new_node(int number);
-void stack_push_bottom(t_stack **stack, t_stack *new_node);
-int	get_stack_size(t_stack **stack);
+/* parsing.c */
 
-int	ft_isdigit(char c);
-int	ft_issign(char c);
+int		is_valid_arg(char *arg);
+int		are_valid_args(char **av);
+int		parse_and_push(t_stack **stack_a, char *s, int *j);
+void	fill_stack_a(t_stack **stack_a, int ac, char **av);
+void	check_and_alloc(t_stack **stack_a, int num);
+
+/* quicksort.c */
 
 void	quicksort(int *arr, int low, int high);
+
+/* stack.c */
+
+int		get_stack_size(t_stack **stack);
+void	stack_push_bottom(t_stack **stack, t_stack *new_node);
+t_stack	*stack_new_node(int number, t_stack *prev);
+
+/* utils.c */
+
+int		ft_isdigit(char c);
+int		ft_issign(char c);
+void	error_free_exit(t_stack **stack_a, t_stack **stack_b);
 
 #endif
