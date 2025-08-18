@@ -42,7 +42,7 @@ void	do_pa(t_stack **stack_b, t_stack **stack_a)
 {
 	t_stack *top_b;
 
-	if (!stack_a || !*stack_a)
+	if (!stack_b || !*stack_b)
 		return ;
 	top_b = *stack_b;
 	*stack_b = top_b->next;
