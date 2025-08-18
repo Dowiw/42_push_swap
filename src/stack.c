@@ -14,11 +14,11 @@
 #include <stdlib.h>
 
 /**
- * - Allocates a new node
+ * - Allocates a new node, and takes prev node
  * - node->number = number, index = 0, next = NULL
  * - Returns NULL in malloc error
  */
-t_stack	*stack_new_node(int number)
+t_stack	*stack_new_node(int number, t_stack *prev)
 {
 	t_stack	*node;
 
@@ -28,14 +28,17 @@ t_stack	*stack_new_node(int number)
 	node->number = number;
 	node->correct_idx = 0;
 	node->next = NULL;
+	if (!prev)
+		node->prev = NULL;
+	else
+		node->prev = prev;
 	return (node);
 }
-
 /**
  * - Puts node to the bottom of a stack
  * - Exits when new node is empty
  */
-void	stack_push_bottom(t_stack **stack, t_stack *new_node)
+void stack_push_bottom(t_stack **stack, t_stack *new_node)
 {
 	t_stack *cursor;
 
@@ -44,17 +47,19 @@ void	stack_push_bottom(t_stack **stack, t_stack *new_node)
 	if (!*stack)
 	{
 		*stack = new_node;
+		new_node->prev = NULL;
 		return ;
 	}
 	cursor = *stack;
 	while (cursor->next != NULL)
 		cursor = cursor->next;
 	cursor->next = new_node;
+	new_node->prev = cursor;
 	new_node->next = NULL;
 }
 
 /**
- * - Returns stack size in size_t
+ * - Returns stack size in int
  */
 int	get_stack_size(t_stack **stack)
 {
