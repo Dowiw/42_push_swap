@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 int main() {
-	char *one_line[] = {"./a.out", "1 2 3 4 5 6 7 8 9 10", NULL};
+	char *one_line[] = {"./a.out", "12 5 19 3 8 1 14 7 2 9 15 6 0 18 4 11 13 10 16 17", NULL};
 	char *mult_line[] = {"./a.out", "-300", "-300", "-500", NULL};
 	printf("one_line: %i\n", are_valid_args(one_line));
 	printf("mult line: %i\n", are_valid_args(mult_line));
@@ -25,7 +25,10 @@ int main() {
 	int count = 0; // debug for infinite loop
 	while (cursor != NULL)
 	{
-		printf("stack num: %i\n", cursor->number);
+		int prev_num = 0;
+		if (cursor->prev != NULL)
+			prev_num = cursor->prev->number;
+		printf("stack num: %i, correct_idx: %i, prev_num: %i\n", cursor->number, cursor->correct_idx, prev_num);
 		cursor = cursor->next;
 		count++;
 		if (count > 100) break ;
