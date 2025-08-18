@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "ft_push_swap.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 /**
  * - Checks if character is a digit
@@ -32,4 +34,30 @@ int ft_issign(char c)
 	if (c == '+' || c == '-')
 		return (1);
 	return (0);
+}
+
+/**
+ * - Function that writes `"Error\n"` to STDERR.
+ * - Frees the allocated stacks.
+ * - End: terminates the program with `exit(EXIT_FAILURE)`
+ */
+void	error_free_exit(t_stack **stack_a, t_stack **stack_b)
+{
+	t_stack	*cursor;
+
+	cursor = NULL;
+	while (stack_a && *stack_a)
+	{
+		cursor = (*stack_a)->next;
+		free(*stack_a);
+		*stack_a = cursor;
+	}
+	while (stack_b && *stack_b)
+	{
+		cursor = (*stack_b)->next;
+		free(*stack_b);
+		*stack_b = cursor;
+	}
+	write(STDERR_FILENO, "Error\n", 6);
+	exit(EXIT_FAILURE);
 }
