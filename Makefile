@@ -13,7 +13,10 @@
 NAME = push_swap
 
 SRC_DIR = ./src
-C_FILES = ft_push_swap.c parsing.c utils.c stack.c quicksort.c
+
+C_FILES = main.c parsing.c utils.c stack.c \
+		index.c quicksort.c b_moves.c a_moves.c \
+		push_swap.c
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
 
 OBJ = $(SRC:.c=.o)
