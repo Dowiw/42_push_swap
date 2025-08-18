@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quicksort.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/17 17:10:21 by kmonjard          #+#    #+#             */
+/*   Updated: 2025/08/17 17:10:23 by kmonjard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "ft_push_swap.h"
+
 static int	partition(int *arr, int low, int high);
 
 /**
@@ -57,7 +71,7 @@ int main(void)
 	quicksort((int *)arr, 0, 10 - 1);
 	for (int i = 0; i < 10; i++)
 		printf("sorted num at %i: %i\n", i, arr[i]);
-	
+
 	return (0);
 }
 */
