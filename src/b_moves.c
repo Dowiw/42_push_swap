@@ -18,7 +18,7 @@
  */
 void	do_sb(t_stack **stack_b)
 {
-	t_stack *first;
+	t_stack	*first;
 	t_stack	*second;
 
 	if (!stack_b || !*stack_b || !(*stack_b)->next)
@@ -40,7 +40,7 @@ void	do_sb(t_stack **stack_b)
  */
 void	do_pb(t_stack **stack_a, t_stack **stack_b)
 {
-	t_stack *top_a;
+	t_stack	*top_a;
 
 	if (!stack_a || !*stack_a)
 		return ;
