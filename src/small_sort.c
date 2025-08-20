@@ -23,21 +23,21 @@ void	sort_three(t_stack **a)
 	second = (*a)->next->correct_idx;
 	third = (*a)->next->next->correct_idx;
 	if (first > second && second < third && first < third)
-		do_sa(a);
+		do_sa(a, 1);
 	else if (first > second && second > third)
 	{
-		do_sa(a);
-		do_rra(a);
+		do_sa(a, 1);
+		do_rra(a, 1);
 	}
 	else if (first > third && second < first && second < third)
-		do_ra(a);
+		do_ra(a, 1);
 	else if (second > first && second > third && third > first)
 	{
-		do_sa(a);
-		do_ra(a);
+		do_sa(a, 1);
+		do_ra(a, 1);
 	}
 	else if (first < second && second > third && first > third)
-		do_rra(a);
+		do_rra(a, 1);
 }
 
 void	sort_four(t_stack **a, t_stack **b)
@@ -48,7 +48,7 @@ void	sort_four(t_stack **a, t_stack **b)
 	min = 0;
 	cursor = *a;
 	while (cursor->correct_idx != min)
-		do_ra(a);
+		do_ra(a, 1);
 	do_pb(a, b);
 	sort_three(a);
 	do_pa(b, a);
@@ -64,18 +64,21 @@ void	sort_five(t_stack **a, t_stack **b)
 	min = 0;
 	second_min = 1;
 	nums_pushed = 0;
-	cursor = *a;
 	while (nums_pushed < 2)
 	{
+		cursor = *a;
 		if (cursor->correct_idx == min || cursor->correct_idx == second_min)
 		{
 			do_pb(a, b);
 			nums_pushed++;
 		}
 		else
-			do_ra(a);
+			do_ra(a, 1);
 	}
 	sort_three(a);
+	cursor = *b;
+	if (cursor->correct_idx < cursor->next->correct_idx)
+		do_sb(b, 1);
 	do_pa(b, a);
 	do_pa(b, a);
 }
