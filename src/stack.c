@@ -34,28 +34,45 @@ t_stack	*stack_new_node(int number, t_stack *prev)
 		node->prev = prev;
 	return (node);
 }
+
 /**
  * - Puts node to the bottom of a stack
  * - Exits when new node is empty
  */
-void stack_push_bottom(t_stack **stack, t_stack *new_node)
+void	stack_push_bottom(t_stack **stack, t_stack *node)
 {
-	t_stack *cursor;
+	t_stack	*cursor;
 
-	if (!new_node)
+	if (!node)
 		return ;
 	if (!*stack)
 	{
-		*stack = new_node;
-		new_node->prev = NULL;
+		*stack = node;
+		node->prev = NULL;
 		return ;
 	}
 	cursor = *stack;
 	while (cursor->next != NULL)
 		cursor = cursor->next;
-	cursor->next = new_node;
-	new_node->prev = cursor;
-	new_node->next = NULL;
+	cursor->next = node;
+	node->prev = cursor;
+	node->next = NULL;
+}
+
+/**
+ * - Push a node to the top
+ * - Sets prev of current top to node
+ * - Exits if node is empty
+ */
+void	stack_push_top(t_stack **stack, t_stack *node)
+{
+	if (!node)
+		return ;
+	node->next = *stack;
+	node->prev = NULL;
+	if (*stack)
+		(*stack)->prev = node;
+	*stack = node;
 }
 
 /**
@@ -63,8 +80,8 @@ void stack_push_bottom(t_stack **stack, t_stack *new_node)
  */
 int	get_stack_size(t_stack **stack)
 {
-	int	count;
-	t_stack *cursor;
+	int		count;
+	t_stack	*cursor;
 
 	count = 0;
 	cursor = *stack;
