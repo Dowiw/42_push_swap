@@ -20,7 +20,7 @@
 static void	put_index(int *arr, int size, t_stack **stack_a)
 {
 	int		i;
-	t_stack *cursor;
+	t_stack	*cursor;
 
 	i = 0;
 	cursor = *stack_a;
@@ -47,9 +47,9 @@ static void	put_index(int *arr, int size, t_stack **stack_a)
  */
 void	get_index(t_stack **stack_a)
 {
-	int	size;
-	int	i;
-	int	*arr;
+	int		size;
+	int		i;
+	int		*arr;
 	t_stack	*cursor;
 
 	size = get_stack_size(stack_a);
