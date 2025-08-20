@@ -29,7 +29,7 @@ int	ft_isdigit(char c)
  * - Checks if character is a sign
  * - `c == '+' || c == '-'`
  */
-int ft_issign(char c)
+int	ft_issign(char c)
 {
 	if (c == '+' || c == '-')
 		return (1);
