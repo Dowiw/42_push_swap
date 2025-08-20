@@ -15,8 +15,9 @@
 
 /**
  * - Swap the first 2 elements of stack a
+ * - Put the bool 1 to write the instruction, 0 for no
  */
-void	do_sa(t_stack **stack_a)
+void	do_sa(t_stack **stack_a, int bool)
 {
 	t_stack	*first;
 	t_stack	*second;
@@ -27,12 +28,13 @@ void	do_sa(t_stack **stack_a)
 	second = first->next;
 	first->next = second->next;
 	first->prev = second;
-	second->next = first;
-	second->prev = NULL;
 	if (second->next)
 		second->next->prev = first;
+	second->next = first;
+	second->prev = NULL;
 	*stack_a = second;
-	write(1, "sa\n", 3);
+	if (bool)
+		write(1, "sa\n", 3);
 }
 
 /**
@@ -59,8 +61,9 @@ void	do_pa(t_stack **stack_b, t_stack **stack_a)
 
 /**
  * - Shift elements up of stack a by one
+ * - Put the bool 1 to write the instruction, 0 for no
  */
-void	do_ra(t_stack **stack_a)
+void	do_ra(t_stack **stack_a, int bool)
 {
 	t_stack	*top_a;
 	t_stack	*bottom_a;
@@ -76,13 +79,15 @@ void	do_ra(t_stack **stack_a)
 	bottom_a->next = top_a;
 	top_a->prev = bottom_a;
 	top_a->next = NULL;
-	write(1, "ra\n", 3);
+	if (bool)
+		write(1, "ra\n", 3);
 }
 
 /**
  * - Shift elements of stack a down by one
+ * - Put the bool 1 to write the instruction, 0 for no
  */
-void	do_rra(t_stack **stack_a)
+void	do_rra(t_stack **stack_a, int bool)
 {
 	t_stack	*top_a;
 	t_stack	*bottom_a;
@@ -93,10 +98,12 @@ void	do_rra(t_stack **stack_a)
 	bottom_a = *stack_a;
 	while (bottom_a->next != NULL)
 		bottom_a = bottom_a->next;
-	bottom_a->next = top_a;
-	bottom_a->prev->next = NULL;
+	if (bottom_a->prev)
+		bottom_a->prev->next = NULL;
 	bottom_a->prev = NULL;
+	bottom_a->next = top_a;
 	top_a->prev = bottom_a;
 	*stack_a = bottom_a;
-	write(1, "rra\n", 4);
+	if (bool)
+		write(1, "rra\n", 4);
 }
