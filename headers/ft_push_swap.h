@@ -52,6 +52,12 @@ void	check_and_alloc(t_stack **stack_a, int num);
 void	large_sort(t_stack **stack_a, t_stack **stack_b, int size);
 void	do_push_swap(t_stack **stack_a, t_stack **stack_b);
 
+/* small_sort.c */
+
+void	sort_three(t_stack **a);
+void	sort_four(t_stack **a, t_stack **b);
+void	sort_five(t_stack **a, t_stack **b);
+
 /* quicksort.c */
 
 void	quicksort(int *arr, int low, int high);
