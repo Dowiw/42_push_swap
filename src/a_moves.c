@@ -18,7 +18,7 @@
  */
 void	do_sa(t_stack **stack_a)
 {
-	t_stack *first;
+	t_stack	*first;
 	t_stack	*second;
 
 	if (!stack_a || !*stack_a || !(*stack_a)->next)
@@ -40,7 +40,7 @@ void	do_sa(t_stack **stack_a)
  */
 void	do_pa(t_stack **stack_b, t_stack **stack_a)
 {
-	t_stack *top_b;
+	t_stack	*top_b;
 
 	if (!stack_b || !*stack_b)
 		return ;
