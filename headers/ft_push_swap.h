@@ -27,17 +27,23 @@ void	get_index(t_stack **stack_a);
 
 /* a_moves.c */
 
-void	do_sa(t_stack **stack_a);
+void	do_sa(t_stack **stack_a, int bool);
 void	do_pa(t_stack **stack_b, t_stack **stack_a);
-void	do_ra(t_stack **stack_a);
-void	do_rra(t_stack **stack_a);
+void	do_ra(t_stack **stack_a, int bool);
+void	do_rra(t_stack **stack_a, int bool);
 
 /* b_moves.c */
 
-void	do_sb(t_stack **stack_b);
+void	do_sb(t_stack **stack_b, int bool);
 void	do_pb(t_stack **stack_a, t_stack **stack_b);
-void	do_rb(t_stack **stack_b);
-void	do_rrb(t_stack **stack_b);
+void	do_rb(t_stack **stack_b, int bool);
+void	do_rrb(t_stack **stack_b, int bool);
+
+/* both_moves.c */
+
+void	do_ss(t_stack **stack_a, t_stack **stack_b);
+void	do_rr(t_stack **stack_a, t_stack **stack_b);
+void	do_rrr(t_stack **stack_a, t_stack **stack_b);
 
 /* parsing.c */
 
