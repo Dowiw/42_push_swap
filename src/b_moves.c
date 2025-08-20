@@ -16,7 +16,7 @@
 /**
  * - Swap the first 2 elements of stack b
  */
-void	do_sb(t_stack **stack_b)
+void	do_sb(t_stack **stack_b, int bool)
 {
 	t_stack	*first;
 	t_stack	*second;
@@ -32,7 +32,8 @@ void	do_sb(t_stack **stack_b)
 	if (second->next)
 		second->next->prev = first;
 	*stack_b = second;
-	write(1, "sb\n", 3);
+	if (bool)
+		write(1, "sb\n", 3);
 }
 
 /**
@@ -60,7 +61,7 @@ void	do_pb(t_stack **stack_a, t_stack **stack_b)
 /**
  * - Shift elements of up stack b by one
  */
-void	do_rb(t_stack **stack_b)
+void	do_rb(t_stack **stack_b, int bool)
 {
 	t_stack	*top_b;
 	t_stack	*bottom_b;
@@ -76,13 +77,14 @@ void	do_rb(t_stack **stack_b)
 	bottom_b->next = top_b;
 	top_b->prev = bottom_b;
 	top_b->next = NULL;
-	write(1, "rb\n", 3);
+	if (bool)
+		write(1, "rb\n", 3);
 }
 
 /**
  * - Shift elements of stack b down by one
  */
-void	do_rrb(t_stack **stack_b)
+void	do_rrb(t_stack **stack_b, int bool)
 {
 	t_stack	*top_b;
 	t_stack	*bottom_b;
@@ -98,5 +100,6 @@ void	do_rrb(t_stack **stack_b)
 	bottom_b->prev = NULL;
 	top_b->prev = bottom_b;
 	*stack_b = bottom_b;
-	write(1, "rrb\n", 4);
+	if (bool)
+		write(1, "rrb\n", 4);
 }
