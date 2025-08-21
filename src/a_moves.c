@@ -6,7 +6,7 @@
 /*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 08:10:12 by kmonjard          #+#    #+#             */
-/*   Updated: 2025/08/18 08:10:13 by kmonjard         ###   ########.fr       */
+/*   Updated: 2025/08/21 10:10:42 by kmonjard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,9 @@ void	do_rra(t_stack **stack_a, int bool)
 	bottom_a = *stack_a;
 	while (bottom_a->next != NULL)
 		bottom_a = bottom_a->next;
-	if (bottom_a->prev)
-		bottom_a->prev->next = NULL;
-	bottom_a->prev = NULL;
 	bottom_a->next = top_a;
+	bottom_a->prev->next = NULL;
+	bottom_a->prev = NULL;
 	top_a->prev = bottom_a;
 	*stack_a = bottom_a;
 	if (bool)
