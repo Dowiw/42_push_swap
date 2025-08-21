@@ -55,7 +55,7 @@ void	check_and_alloc(t_stack **stack_a, int num);
 
 /* push_swap.c */
 
-void	large_sort(t_stack **stack_a, t_stack **stack_b, int size);
+void	large_sort(t_stack **stack_a, t_stack **stack_b);
 void	do_push_swap(t_stack **stack_a, t_stack **stack_b);
 
 /* small_sort.c */

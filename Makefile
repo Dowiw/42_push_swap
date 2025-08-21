@@ -16,7 +16,7 @@ SRC_DIR = ./src
 
 C_FILES = main.c parsing.c utils.c stack.c \
 		index.c quicksort.c b_moves.c a_moves.c \
-		push_swap.c
+		push_swap.c small_sort.c both_moves.c
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
 
 OBJ = $(SRC:.c=.o)
