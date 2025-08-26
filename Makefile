@@ -24,7 +24,7 @@ OBJ = $(SRC:.c=.o)
 INCLUDES = headers
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Werror -Wextra -g
 
 all: $(NAME)
 
