@@ -43,5 +43,5 @@ void	do_rrr(t_stack **stack_a, t_stack **stack_b)
 		return ;
 	do_rra(stack_a, 0);
 	do_rrb(stack_b, 0);
-	write(1, "rrr\n", 3);
+	write(1, "rrr\n", 4);
 }
