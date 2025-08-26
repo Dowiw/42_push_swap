@@ -14,126 +14,137 @@
 #include <unistd.h>
 #include <limits.h>
 
+#include <stdio.h>
+
+typedef struct s_cost
+{
+	int		r_r;
+	int		total_rr;
+	int		ra_rrb;
+	int		total_ra_rrb;
+	int		rra_rb;
+	int		total_rra_rb;
+	int		rr_rr;
+	int		total_rrr;
+	int		rotates_a;
+	int		rotates_b;
+	int		best_cost;
+}			t_cost;
+
 // Find the position where a value should be inserted in stack B (descending order)
 static int	find_target_pos_b(t_stack **stack_b, int value)
 {
 	t_stack	*current;
-	t_stack	*max_node;
 	int		pos;
-	int		target_pos;
+	int		best_pos;
+	int		max_smaller;
+	int		max_pos;
+	int		max_val;
 
 	if (!*stack_b)
 		return (0);
-
-	// Find max value in stack B
-	max_node = *stack_b;
-	current = *stack_b;
-	while (current)
-	{
-		if (current->number > max_node->number)
-			max_node = current;
-		current = current->next;
-	}
-
-	// If value is bigger than max or smaller than min, place above max
 	current = *stack_b;
 	pos = 0;
-	while (current && current != max_node)
+	best_pos = 0;
+	max_smaller = INT_MIN;
+	max_pos = 0;
+	max_val = INT_MIN;
+	while (current)
 	{
+		if (current->number < value && current->number > max_smaller)
+		{
+			max_smaller = current->number;
+			best_pos = (pos + 1) % get_stack_size(stack_b);
+		}
+		if (current->number > max_val)
+		{
+			max_val = current->number;
+			max_pos = (pos + 1) % get_stack_size(stack_b);
+		}
+		current = current->next;
 		pos++;
-		current = current->next;
 	}
-
-	// Check if value fits between existing values (descending order)
-	current = *stack_b;
-	target_pos = 0;
-	while (current && current->next)
-	{
-		if (value < current->number && value > current->next->number)
-			return (target_pos + 1);
-		target_pos++;
-		current = current->next;
-	}
-
-	return (pos); // Place above max
+	return (max_smaller == INT_MIN) ? max_pos : best_pos;
 }
 
 // Find the position where a value should be inserted in stack A (ascending order)
 static int	find_target_pos_a(t_stack **stack_a, int value)
 {
 	t_stack	*current;
-	t_stack	*min_node;
 	int		pos;
-	int		target_pos;
+	int		best_pos;
+	int		min_larger;
+	int		min_pos;
+	int		min_val;
 
 	if (!*stack_a)
 		return (0);
-
-	// Find min value in stack A
-	min_node = *stack_a;
-	current = *stack_a;
-	while (current)
-	{
-		if (current->number < min_node->number)
-			min_node = current;
-		current = current->next;
-	}
-
-	// Check if value fits between existing values (ascending order)
-	current = *stack_a;
-	target_pos = 0;
-	while (current && current->next)
-	{
-		if (value > current->number && value < current->next->number)
-			return (target_pos + 1);
-		target_pos++;
-		current = current->next;
-	}
-
-	// If value doesn't fit between, place above min
 	current = *stack_a;
 	pos = 0;
-	while (current && current != min_node)
+	best_pos = 0;
+	min_larger = INT_MAX;
+	min_pos = 0;
+	min_val = INT_MAX;
+	while (current)
 	{
-		pos++;
+		if (current->number > value && current->number < min_larger)
+		{
+			min_larger = current->number;
+			best_pos = pos;
+		}
+		if (current->number < min_val)
+		{
+			min_val = current->number;
+			min_pos = pos;
+		}
 		current = current->next;
+		pos++;
 	}
+	return (min_larger == INT_MAX) ? min_pos : best_pos;
+}
 
-	return (pos);
+static int	get_min(t_cost *cost)
+{
+	int	total_rrr;
+	int	total_rr;
+	int	total_ra_rrb;
+	int	total_rra_rb;
+	int	min;
+
+	total_rr = cost->total_rr;
+	total_rrr = cost->total_rrr;
+	total_ra_rrb = cost->total_ra_rrb;
+	total_rra_rb = cost->total_rra_rb;
+	min = total_rr;
+	min = (total_rrr < min) * total_rrr + (total_rrr >= min) * min;
+	min = (total_ra_rrb < min) * total_ra_rrb + (total_ra_rrb >= min) * min;
+	min = (total_rra_rb < min) * total_rra_rb + (total_rra_rb >= min) * min;
+	return (min);
 }
 
 // Calculate cost to move element at given position to target position
-static int	calculate_move_cost(int pos, int target_pos, int size_a, int size_b)
+static int	calculate_move_cost(int pos_a, int pos_b, int size_a, int size_b)
 {
-	int	cost_a;
-	int	cost_b;
-	int	total_cost;
+	int		ra;
+	int		rra;
+	int		rb;
+	int		rrb;
+	t_cost	cost;
 
-	// Calculate rotations needed for stack A
-	if (pos <= size_a / 2)
-		cost_a = pos;
-	else
-		cost_a = size_a - pos;
-
-	// Calculate rotations needed for stack B
-	if (target_pos <= size_b / 2)
-		cost_b = target_pos;
-	else
-		cost_b = size_b - target_pos;
-
-	// Check if we can use simultaneous rotations
-	if ((pos <= size_a / 2 && target_pos <= size_b / 2) ||
-		(pos > size_a / 2 && target_pos > size_b / 2))
-	{
-		if (cost_a > cost_b)
-			total_cost = cost_a;
-		else
-			total_cost = cost_b;
-	}
-	else
-		total_cost = cost_a + cost_b;
-
-	return (total_cost + 1); // +1 for the push operation
+	ra = pos_a;
+	rra = size_a - pos_a;
+	rb = pos_b;
+	rrb = size_b - pos_b;
+	cost.r_r = (ra < rb) * ra + (rb <= ra) * rb;
+	cost.total_rr = (ra - cost.r_r) + (rb - cost.r_r) + cost.r_r;
+	cost.rr_rr = (rra < rrb) * rra + (rrb <= rra) * rrb;
+	cost.total_rrr = (rra - cost.rr_rr) + (rrb - cost.rr_rr) + cost.rr_rr;
+	cost.total_ra_rrb = ra + rrb;
+	cost.total_rra_rb = rra + rb;
+	cost.best_cost = get_min(&cost);
+	cost.rotates_a = (pos_a <= size_a / 2) * pos_a + (pos_a > size_a / 2) * (pos_a - size_a);
+	cost.rotates_b = (pos_b <= size_b / 2) * pos_b + (pos_b > size_b / 2) * (pos_b - size_b);
+	return (cost.best_cost);
 }
 
 // Find the cheapest element to move from stack A to stack B
@@ -153,23 +164,20 @@ static int	find_cheapest_move(t_stack **stack_a, t_stack **stack_b)
 	current = *stack_a;
 	pos = 0;
 	cheapest_pos = 0;
-	cheapest_cost = 2147483647; // INT_MAX
+	cheapest_cost = INT_MAX;
 
 	while (current)
 	{
 		target_pos = find_target_pos_b(stack_b, current->number);
 		current_cost = calculate_move_cost(pos, target_pos, size_a, size_b);
-
 		if (current_cost < cheapest_cost)
 		{
 			cheapest_cost = current_cost;
 			cheapest_pos = pos;
 		}
-
 		current = current->next;
 		pos++;
 	}
-
 	return (cheapest_pos);
 }
 
@@ -181,7 +189,6 @@ static void	execute_rotations(t_stack **stack_a, t_stack **stack_b, int pos_a, i
 	int	rot_a = (pos_a <= size_a / 2) ? pos_a : size_a - pos_a;
 	int	rot_b = (target_pos_b <= size_b / 2) ? target_pos_b : size_b - target_pos_b;
 
-	// Use simultaneous rotations when possible
 	if (pos_a <= size_a / 2 && target_pos_b <= size_b / 2)
 	{
 		while (rot_a > 0 && rot_b > 0)
@@ -259,7 +266,7 @@ static void	execute_rotations(t_stack **stack_a, t_stack **stack_b, int pos_a, i
 	}
 }
 
-// Move elements back from stack B to stack A in correct positions
+// Optimized: Move elements back from stack B to stack A in correct positions
 static void	push_back_to_a(t_stack **stack_a, t_stack **stack_b)
 {
 	int	target_pos;
@@ -270,20 +277,23 @@ static void	push_back_to_a(t_stack **stack_a, t_stack **stack_b)
 		target_pos = find_target_pos_a(stack_a, (*stack_b)->number);
 		size_a = get_stack_size(stack_a);
 
-		if (target_pos <= size_a / 2)
+		if (target_pos > 0)
 		{
-			while (target_pos > 0)
+			if (target_pos <= size_a / 2)
 			{
-				do_ra(stack_a, 1);
-				target_pos--;
+				while (target_pos > 0)
+				{
+					do_ra(stack_a, 1);
+					target_pos--;
+				}
 			}
-		}
-		else
-		{
-			while (target_pos < size_a)
+			else
 			{
-				do_rra(stack_a, 1);
-				target_pos++;
+				while (target_pos < size_a)
+				{
+					do_rra(stack_a, 1);
+					target_pos++;
+				}
 			}
 		}
 
@@ -300,15 +310,10 @@ static void	final_rotation(t_stack **stack_a)
 	int		pos;
 	int		size;
 
-	if (!*stack_a)
-		return ;
-
 	min_node = *stack_a;
 	current = *stack_a;
 	min_pos = 0;
 	pos = 0;
-
-	// Find minimum value and its position
 	while (current)
 	{
 		if (current->number < min_node->number)
@@ -319,10 +324,7 @@ static void	final_rotation(t_stack **stack_a)
 		current = current->next;
 		pos++;
 	}
-
 	size = get_stack_size(stack_a);
-
-	// Rotate to bring minimum to top
 	if (min_pos <= size / 2)
 	{
 		while (min_pos > 0)
@@ -341,24 +343,37 @@ static void	final_rotation(t_stack **stack_a)
 	}
 }
 
-// Main function implementing the Turk Algorithm for large sorts
-void	large_sort(t_stack **stack_a, t_stack **stack_b)
+// Optimized chunk-based initial pushing
+static void	push_initial_chunk(t_stack **stack_a, t_stack **stack_b)
 {
-	int		cheapest_pos;
-	int		target_pos;
+	int	total_size;
+	int	push_count;
+	int	cheapest_pos;
+	int	target_pos;
 	t_stack	*current;
-	int		i;
+	int	i;
 
-	// Step 1: Push first 2 elements to stack B
-	do_pb(stack_a, stack_b);
-	do_pb(stack_a, stack_b);
+	total_size = get_stack_size(stack_a);
 
-	// Step 2: Push elements using cost calculation until only 3 remain
-	while (get_stack_size(stack_a) > 3)
+	// Determine how many elements to push based on total size
+	if (total_size <= 100)
+		push_count = total_size * 30 / 100; // 35% for smaller sets
+	else
+		push_count = total_size * 30 / 100; // 40% for larger sets
+
+	// Ensure we push at least 2 elements
+	if (push_count < 2)
+		push_count = 2;
+
+	// Push first two elements without optimization
+	do_pb(stack_a, stack_b);
+	if (push_count > 1)
+		do_pb(stack_a, stack_b);
+
+	// Push remaining elements using cost optimization
+	for (int pushed = 2; pushed < push_count && get_stack_size(stack_a) > 10; pushed++)
 	{
 		cheapest_pos = find_cheapest_move(stack_a, stack_b);
-
-		// Find the value at cheapest position
 		current = *stack_a;
 		i = 0;
 		while (i < cheapest_pos && current)
@@ -366,24 +381,79 @@ void	large_sort(t_stack **stack_a, t_stack **stack_b)
 			current = current->next;
 			i++;
 		}
+		target_pos = find_target_pos_b(stack_b, current->number);
+		execute_rotations(stack_a, stack_b, cheapest_pos, target_pos);
+		do_pb(stack_a, stack_b);
+	}
+}
 
+/**
+ * - Heart of the algorithm
+ * - Inspired by Mechanical Turk with improvements
+ */
+void	large_sort(t_stack **stack_a, t_stack **stack_b)
+{
+	int		cheapest_pos;
+	int		target_pos;
+	t_stack	*current;
+	int		i;
+	int		min_size;
+	int		total_size;
+
+	total_size = get_stack_size(stack_a);
+
+	// Determine minimum size to keep in stack A
+	if (total_size <= 100)
+		min_size = 10;
+	else
+		min_size = 35;
+
+	// Push initial optimized chunk
+	push_initial_chunk(stack_a, stack_b);
+
+	// Continue pushing until we reach minimum size
+	while (get_stack_size(stack_a) > min_size)
+	{
+		cheapest_pos = find_cheapest_move(stack_a, stack_b);
+		current = *stack_a;
+		i = 0;
+		while (i < cheapest_pos && current)
+		{
+			current = current->next;
+			i++;
+		}
 		target_pos = find_target_pos_b(stack_b, current->number);
 		execute_rotations(stack_a, stack_b, cheapest_pos, target_pos);
 		do_pb(stack_a, stack_b);
 	}
 
-	// Step 3: Sort the remaining 3 elements in stack A
-	sort_three(stack_a);
-
-	// Step 4: Push everything back from B to A
+	// Sort remaining elements in stack A
+	int remaining_size = get_stack_size(stack_a);
+	if (remaining_size == 2)
+	{
+		if ((*stack_a)->correct_idx > (*stack_a)->next->correct_idx)
+			do_sa(stack_a, 1);
+	}
+	else if (remaining_size == 3)
+		sort_three(stack_a);
+	else if (remaining_size == 4)
+		sort_four(stack_a, stack_b);
+	else if (remaining_size == 5)
+		sort_five(stack_a, stack_b);
+	else
+	{
+		while (get_stack_size(stack_a) > 3)
+		{
+			do_pb(stack_a, stack_b);
+		}
+		sort_three(stack_a);
+	}
 	push_back_to_a(stack_a, stack_b);
-
-	// Step 5: Final rotation to bring minimum to top
 	final_rotation(stack_a);
 }
 
 /**
- * -
+ * - Checks if stack is sorted
  */
 int	is_sorted(t_stack **stack_a)
 {
