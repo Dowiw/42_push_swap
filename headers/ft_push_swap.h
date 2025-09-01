@@ -16,7 +16,8 @@
 typedef struct s_stack
 {
 	int				number;
-	int				correct_idx;
+	unsigned int	correct_idx;
+	unsigned int	chunk_id;
 	struct s_stack	*prev;
 	struct s_stack	*next;
 }					t_stack;
@@ -55,7 +56,7 @@ void	check_and_alloc(t_stack **stack_a, int num);
 
 /* push_swap.c */
 
-void	large_sort(t_stack **stack_a, t_stack **stack_b);
+void	large_sort(t_stack **stack_a, t_stack **stack_b, int size);
 void	do_push_swap(t_stack **stack_a, t_stack **stack_b);
 
 /* small_sort.c */
