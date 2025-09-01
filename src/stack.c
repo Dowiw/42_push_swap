@@ -27,6 +27,7 @@ t_stack	*stack_new_node(int number, t_stack *prev)
 		return (NULL);
 	node->number = number;
 	node->correct_idx = 0;
+	node->chunk_id = 0;
 	node->next = NULL;
 	if (!prev)
 		node->prev = NULL;

@@ -42,7 +42,7 @@ void	sort_three(t_stack **a)
 
 void	sort_four(t_stack **a, t_stack **b)
 {
-	int		min;
+	unsigned int		min;
 	t_stack	*cursor;
 
 	min = 0;
@@ -59,8 +59,8 @@ void	sort_four(t_stack **a, t_stack **b)
 
 void	sort_five(t_stack **a, t_stack **b)
 {
-	int		min;
-	int		second_min;
+	unsigned int		min;
+	unsigned int		second_min;
 	int		nums_pushed;
 	t_stack	*cursor;
 
