@@ -17,34 +17,30 @@ typedef struct s_stack
 {
 	int				number;
 	unsigned int	correct_idx;
-	unsigned int	chunk_id;
 	struct s_stack	*prev;
 	struct s_stack	*next;
 }					t_stack;
 
-typedef struct s_chunk
+typedef enum e_actions
 {
-	unsigned int	chunk_id; // id of each chunk
-	unsigned int	min_value;
-	unsigned int	max_value;
-	unsigned int	half;
-	unsigned int	size;
-	unsigned int	current_count; // how many elements currently in chunk
-}		t_chunk;
+	RA,
+	RB,
+	RR,
+	RRA,
+	RRB,
+	RRR,
+	PB,
+	PA,
+	SA,
+	SB,
+	SS
+}	t_actions;
 
 typedef struct s_moves
 {
-	char			**seq;
+	t_actions		*seq;
 	unsigned int	total_moves;
 }					t_moves;
-
-typedef struct s_data
-{
-	t_chunk			*chunks; // array of chunks
-	unsigned int	num_chunks;
-	unsigned int	*chunk_sizes;
-	unsigned int	total_size;
-}					t_data;
 
 /* index.c */
 
@@ -84,7 +80,7 @@ void	check_and_alloc(t_stack **stack_a, int num);
 
 /* push_swap.c */
 
-void	large_sort(t_stack **stack_a, t_stack **stack_b, int size);
+void	large_sort(t_stack **stack_a, t_stack **stack_b);
 void	do_push_swap(t_stack **stack_a, t_stack **stack_b);
 
 /* small_sort.c */
@@ -99,16 +95,17 @@ void	quicksort(int *arr, int low, int high);
 
 /* stack.c */
 
+int		get_stack_size(t_stack **stack);
 void	stack_push_bottom(t_stack **stack, t_stack *node);
 void	stack_push_top(t_stack **stack, t_stack *node);
 t_stack	*stack_new_node(int number, t_stack *prev);
-t_stack	*get_smallest(t_stack **stack);
-int	get_stack_size(t_stack **stack);
+t_stack	*get_bottom_node(t_stack **stack);
 
 /* utils.c */
 
 int		ft_isdigit(char c);
 int		ft_issign(char c);
+int		is_sorted(t_stack **a);
 void	error_free_exit(t_stack **stack_a, t_stack **stack_b);
 
 #endif
