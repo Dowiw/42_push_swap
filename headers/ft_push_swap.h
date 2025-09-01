@@ -22,6 +22,30 @@ typedef struct s_stack
 	struct s_stack	*next;
 }					t_stack;
 
+typedef struct s_chunk
+{
+	unsigned int	chunk_id; // id of each chunk
+	unsigned int	min_value;
+	unsigned int	max_value;
+	unsigned int	half;
+	unsigned int	size;
+	unsigned int	current_count; // how many elements currently in chunk
+}		t_chunk;
+
+typedef struct s_moves
+{
+	char			**seq;
+	unsigned int	total_moves;
+}					t_moves;
+
+typedef struct s_data
+{
+	t_chunk			*chunks; // array of chunks
+	unsigned int	num_chunks;
+	unsigned int	*chunk_sizes;
+	unsigned int	total_size;
+}					t_data;
+
 /* index.c */
 
 void	get_index(t_stack **stack_a);
@@ -45,6 +69,10 @@ void	do_rrb(t_stack **stack_b, int bool);
 void	do_ss(t_stack **stack_a, t_stack **stack_b);
 void	do_rr(t_stack **stack_a, t_stack **stack_b);
 void	do_rrr(t_stack **stack_a, t_stack **stack_b);
+
+// optimize.c
+
+void	execute_moves(t_moves *moves, t_stack **a, t_stack **b);
 
 /* parsing.c */
 
@@ -71,10 +99,11 @@ void	quicksort(int *arr, int low, int high);
 
 /* stack.c */
 
-int		get_stack_size(t_stack **stack);
 void	stack_push_bottom(t_stack **stack, t_stack *node);
 void	stack_push_top(t_stack **stack, t_stack *node);
 t_stack	*stack_new_node(int number, t_stack *prev);
+t_stack	*get_smallest(t_stack **stack);
+int	get_stack_size(t_stack **stack);
 
 /* utils.c */
 
