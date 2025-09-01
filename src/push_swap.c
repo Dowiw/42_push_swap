@@ -19,30 +19,6 @@
 
 int	is_sorted(t_stack **a);
 
-typedef struct s_chunk
-{
-	unsigned int	chunk_id; // id of each chunk
-	unsigned int	min_value;
-	unsigned int	max_value;
-	unsigned int	half;
-	unsigned int	size;
-	unsigned int	current_count; // how many elements currently in chunk
-}		t_chunk;
-
-typedef struct s_moves
-{
-	char			**seq;
-	unsigned int	total_moves;
-}					t_moves;
-
-typedef struct s_data
-{
-	t_chunk			*chunks; // array of chunks
-	unsigned int	num_chunks;
-	unsigned int	*chunk_sizes;
-	unsigned int	total_size;
-}					t_data;
-
 void	free_data(t_data *data)
 {
 	if (!data)
@@ -52,6 +28,20 @@ void	free_data(t_data *data)
 	if (data->chunk_sizes)
 		free(data->chunk_sizes);
 	free(data);
+}
+
+t_stack *get_bottom_node(t_stack **b, int *pos)
+{
+	t_stack *current = *b;
+	int i = 0;
+	while (current && current->next)
+	{
+		current = current->next;
+		i++;
+	}
+	if (pos)
+		*pos = i;
+	return (current);
 }
 
 // Add free_moves implementation
@@ -78,13 +68,13 @@ unsigned int	calc_chunk_count(unsigned int size)
 	if (size <= 10)
 		return (3);
 	else if (size <= 50)
-		return (5);
+		return (3);
 	else if (size <= 100)
-		return (7);
+		return (3);
 	else if (size <= 200)
-		return (10);
+		return (4);
 	else if (size <= 500)
-		return (12);
+		return (14);
 	else
 		return (15);
 }
@@ -109,7 +99,6 @@ void	init_chunks(t_chunk *chunks, unsigned int *sizes, int count)
 		chunks[i].half = sizes[i] / 2;
 		chunks[i].size = sizes[i];
 		chunks[i].current_count = 0;
-		// printf("chunk_id: %i, min_value: %i, max_value: %i, half: %i, size: %i\n", i, current_min, current_min + sizes[i] - 1, sizes[i] / 2, sizes[i]);
 		current_min += sizes[i];
 		i++;
 	}
@@ -141,7 +130,6 @@ void	init_chunk_sizes(unsigned int *chunk_sizes, int size, int chunk_count)
 			chunk_sizes[i] = (size * weight) / total_weight;
 			assigned += chunk_sizes[i];
 		}
-		// printf("Chunk size for %i: %u\n", i + 1, chunk_sizes[i]);
 	}
 }
 
@@ -181,7 +169,6 @@ void	assign_stack_a(t_data *data, t_stack **a)
 	{
 		correct_i = current->correct_idx;
 		current->chunk_id = assign_id(correct_i, data);
-		// printf("Correct_i: %u, Current num: %i, Stack_id: %i\n", correct_i, current->number, current->chunk_id);
 		current = current->next;
 	}
 }
@@ -311,20 +298,6 @@ int find_min_pos(t_stack **a)
 	return min_pos;
 }
 
-int get_smallest(t_stack **a)
-{
-	t_stack *current = *a;
-	int min = current->number;
-
-	while (current)
-	{
-		if (current->number < min)
-			min = current->number;
-		current = current->next;
-	}
-	return min;
-}
-
 int get_max_b(t_stack **b)
 {
 	t_stack *cur = *b;
@@ -339,179 +312,99 @@ int get_max_b(t_stack **b)
 }
 
 /**
- * - Get moves of the closest node in chunk_i from the bottom or top
- * - Pick which one is best in a way that puts it into stack b where one
- *  half of the chunk is on top and the other on the bottom
+ * - Perform Turk when pushing back to a
  */
-t_moves *best_move(t_data *data, t_stack **a, t_stack **b, unsigned int chunk_i)
-{
-	t_stack *current = *a;
-	t_stack *best_node = NULL;
-	int size_a = get_stack_size(a);
-	int min_moves = INT_MAX;
-	int pos = 0, best_pos = 0;
-
-	// Find the closest node in chunk_i (either from top or bottom)
-	while (current)
-	{
-		if (current->chunk_id == chunk_i)
-		{
-			int moves_to_top = pos;
-			int moves_to_bottom = size_a - pos;
-			int moves = (moves_to_top <= moves_to_bottom) ? moves_to_top : moves_to_bottom;
-			if (moves < min_moves)
-			{
-				min_moves = moves;
-				best_node = current;
-				best_pos = pos;
-			}
-		}
-		pos++;
-		current = current->next;
-	}
-
-	if (!best_node)
-		return (NULL);
-	// printf("Best node: %i, Pos: %i\n", best_node->number, best_pos);
-	// Allocate and fill moves
-	t_moves *moves = init_moves(data->total_size);
-	if (!moves)
-		return (NULL);
-
-	// Rotate A to bring best_node to top
-	if (best_pos <= size_a / 2)
-	{
-		for (int i = 0; i < best_pos; i++)
-			strcpy(moves->seq[i], "ra");
-		moves->total_moves = best_pos;
-	}
-	else
-	{
-		for (int i = 0; i < size_a - best_pos; i++)
-			strcpy(moves->seq[i], "rra");
-		moves->total_moves = size_a - best_pos;
-	}
-
-	// Add the push to B
-	strcpy(moves->seq[moves->total_moves], "pb");
-	moves->total_moves++;
-
-	// if the number is the biggest seen ever, put to rb
-	int max_b = get_max_b(b);
-	if (best_node->number > max_b)
-	{
-	strcpy(moves->seq[moves->total_moves], "rb");
-	moves->total_moves++;
-	}
-	return moves;
-}
-
-void	execute_moves(t_moves *moves, t_stack **a, t_stack **b)
-{
-	for (unsigned int i = 0; i < moves->total_moves; i++)
-	{
-		if (strcmp(moves->seq[i], "ra") == 0)
-			do_ra(a, 1);
-		else if (strcmp(moves->seq[i], "rra") == 0)
-			do_rra(a, 1);
-		else if (strcmp(moves->seq[i], "pb") == 0)
-			do_pb(a, b);
-		else if (strcmp(moves->seq[i], "pa") == 0)
-			do_pa(b, a);
-		else if (strcmp(moves->seq[i], "rb") == 0)
-			do_rb(b, 1);
-		else if (strcmp(moves->seq[i], "rrb") == 0)
-			do_rrb(b, 1);
-		else if (strcmp(moves->seq[i], "rr") == 0)
-			do_rr(a, b);
-		else if (strcmp(moves->seq[i], "rrr") == 0)
-			do_rrr(a, b);
-	}
-}
-
-t_stack *get_bottom_node(t_stack **b, int *pos)
-{
-	t_stack *current = *b;
-	int i = 0;
-	while (current && current->next)
-	{
-		current = current->next;
-		i++;
-	}
-	if (pos)
-		*pos = i;
-	return current;
-}
-
 void push_back_to_a(t_stack **a, t_stack **b)
 {
-	int target_pos_top, target_pos_bottom, pos_bottom;
-	t_moves *moves_top, *moves_bottom;
-	t_stack *bottom_node;
-
 	while (get_stack_size(b) > 0)
 	{
-		// Top of B
-		target_pos_top = find_target_pos_a(a, (*b)->number);
-		moves_top = init_moves(get_stack_size(a) + get_stack_size(b));
-		if (!moves_top)
-			error_free_exit(a, b);
+		// 1. Find largest chunk_id in B
+		int max_chunk_id = -1;
+		int pos = 0, pos_top = -1, pos_bottom = -1;
+		t_stack *cur = *b;
+		int size_b = get_stack_size(b);
+		while (cur)
+		{
+			if ((int)cur->chunk_id > max_chunk_id)
+				max_chunk_id = cur->chunk_id;
+			cur = cur->next;
+		}
 
-		if (target_pos_top <= get_stack_size(a) / 2)
+		// 2. Find top and bottom node with max_chunk_id
+		t_stack *top_node = NULL, *bottom_node = NULL;
+		cur = *b;
+		pos = 0;
+		while (cur)
 		{
-			for (int i = 0; i < target_pos_top; i++)
-				strcpy(moves_top->seq[i], "ra");
-			moves_top->total_moves = target_pos_top;
+			if ((int)cur->chunk_id == max_chunk_id)
+			{
+				if (!top_node)
+				{
+					top_node = cur;
+					pos_top = pos;
+				}
+				bottom_node = cur;
+				pos_bottom = pos;
+			}
+			cur = cur->next;
+			pos++;
 		}
-		else
-		{
-			for (int i = 0; i < get_stack_size(a) - target_pos_top; i++)
-				strcpy(moves_top->seq[i], "rra");
-			moves_top->total_moves = get_stack_size(a) - target_pos_top;
-		}
-		strcpy(moves_top->seq[moves_top->total_moves], "pa");
-		moves_top->total_moves++;
 
-		// Bottom of B
-		bottom_node = get_bottom_node(b, &pos_bottom);
-		target_pos_bottom = find_target_pos_a(a, bottom_node->number);
-		moves_bottom = init_moves(get_stack_size(a) + get_stack_size(b));
-		if (!moves_bottom)
-			error_free_exit(a, b);
+		// 3. Calculate moves for top_node
+		int target_pos_a_top = find_target_pos_a(a, top_node->number);
+		int size_a = get_stack_size(a);
+		int moves_a_top = (target_pos_a_top <= size_a / 2) ? target_pos_a_top : target_pos_a_top - size_a;
+		int moves_b_top = (pos_top <= size_b / 2) ? pos_top : pos_top - size_b;
+		int common_top = 0;
+		if (moves_a_top > 0 && moves_b_top > 0)
+			common_top = (moves_a_top < moves_b_top) ? moves_a_top : moves_b_top;
+		else if (moves_a_top < 0 && moves_b_top < 0)
+			common_top = (moves_a_top > moves_b_top) ? moves_a_top : moves_b_top;
+		int total_moves_top = abs(moves_a_top) + abs(moves_b_top) - abs(common_top);
 
-		// Rotate A for bottom value
-		if (target_pos_bottom <= get_stack_size(a) / 2)
-		{
-			for (int i = 0; i < target_pos_bottom; i++)
-				strcpy(moves_bottom->seq[i], "ra");
-			moves_bottom->total_moves = target_pos_bottom;
-		}
-		else
-		{
-			for (int i = 0; i < get_stack_size(a) - target_pos_bottom; i++)
-				strcpy(moves_bottom->seq[i], "rra");
-			moves_bottom->total_moves = get_stack_size(a) - target_pos_bottom;
-		}
-		// Rotate B to bring bottom to top
-		for (int i = 0; i < get_stack_size(b) - pos_bottom; i++)
-			strcpy(moves_bottom->seq[moves_bottom->total_moves + i], "rrb");
-		moves_bottom->total_moves += get_stack_size(b) - pos_bottom;
-		strcpy(moves_bottom->seq[moves_bottom->total_moves], "pa");
-		moves_bottom->total_moves++;
+		// 4. Calculate moves for bottom_node
+		int target_pos_a_bottom = find_target_pos_a(a, bottom_node->number);
+		int moves_a_bottom = (target_pos_a_bottom <= size_a / 2) ? target_pos_a_bottom : target_pos_a_bottom - size_a;
+		int moves_b_bottom = (pos_bottom <= size_b / 2) ? pos_bottom : pos_bottom - size_b;
+		int common_bottom = 0;
+		if (moves_a_bottom > 0 && moves_b_bottom > 0)
+			common_bottom = (moves_a_bottom < moves_b_bottom) ? moves_a_bottom : moves_b_bottom;
+		else if (moves_a_bottom < 0 && moves_b_bottom < 0)
+			common_bottom = (moves_a_bottom > moves_b_bottom) ? moves_a_bottom : moves_b_bottom;
+		int total_moves_bottom = abs(moves_a_bottom) + abs(moves_b_bottom) - abs(common_bottom);
 
-		// Choose minimal
-		if (moves_top->total_moves <= moves_bottom->total_moves)
+		// 5. Choose best option
+		int use_top = (total_moves_top <= total_moves_bottom);
+
+		// 6. Execute moves
+		int moves_a = use_top ? moves_a_top : moves_a_bottom;
+		int moves_b = use_top ? moves_b_top : moves_b_bottom;
+		int common = use_top ? common_top : common_bottom;
+
+		// Perform common rotations
+		while (common > 0)
 		{
-			execute_moves(moves_top, a, b);
-			free_moves(moves_top);
-			free_moves(moves_bottom);
+			do_rr(a, b);
+			moves_a--;
+			moves_b--;
+			common--;
 		}
-		else
+		while (common < 0)
 		{
-			execute_moves(moves_bottom, a, b);
-			free_moves(moves_top);
-			free_moves(moves_bottom);
+			do_rrr(a, b);
+			moves_a++;
+			moves_b++;
+			common++;
 		}
+		// Finish remaining rotations for A
+		while (moves_a > 0) { do_ra(a, 1); moves_a--; }
+		while (moves_a < 0) { do_rra(a, 1); moves_a++; }
+		// Finish remaining rotations for B
+		while (moves_b > 0) { do_rb(b, 1); moves_b--; }
+		while (moves_b < 0) { do_rrb(b, 1); moves_b++; }
+
+		// Push from B to A
+		do_pa(b, a);
 	}
 
 	// Final rotation: bring the smallest value to the top of A
@@ -528,39 +421,86 @@ void push_back_to_a(t_stack **a, t_stack **b)
 	}
 }
 
+int	check_opposite(t_stack *a)
+{
+	int	s_size;
+	int	count;
+	int	diff;
+
+	diff = 0;
+	count = 0;
+	s_size = get_stack_size(&a);
+	while (a && a->next)
+	{
+		diff = a->correct_idx - a->next->correct_idx;
+		if (diff == 2 || diff == 3 || diff == 4)
+			count++;
+		a = a->next;
+	}
+	if (count * 10 >= s_size * 6)
+		return (1);
+	return (0);
+}
+
+/**
+ * - Get moves of the closest node in chunk_i from the bottom or top
+ * - Pick which one is best in a way that puts it into stack b where one
+ *  half of the chunk is on top and the other on the bottom
+ */
+void best_move(t_stack **a, t_stack **b, int range)
+{
+	unsigned int		i;
+
+	i = 0;
+	while (get_stack_size(a) > 0)
+	{
+		if ((*a)->correct_idx >= i && (*a)->correct_idx <= i + range)
+		{
+			do_pb(a, b);
+			if ((*a)->correct_idx > i + range / 2)
+				do_rb(b, 1);// push to bottom half
+			i++;
+		}
+		else if (check_opposite(*a))
+			do_rra(a, 1);
+		else
+			do_ra(a, 1);
+	}
+}
+
 /**
  * - Heart
  */
 void	large_sort(t_stack **a, t_stack **b, int size)
 {
-	t_moves			*moves;
+	unsigned int	i = 0;
+	int	range = 37;
 	t_data			*data;
-	unsigned int	chunk_i;
 
 	data = malloc(sizeof(t_data));
 	if (!data)
 		error_free_exit(a, b);
 	init_data_and_assign(a, size, data);
-	// printf("--- Data: num_chunks: %u, total: %u\n", data->num_chunks, data->total_size);
-	chunk_i = 0;
 	while (get_stack_size(a) > 1)
 	{
-		moves = best_move(data, a, b, chunk_i);
-		if (!moves)
+		if ((*a)->correct_idx <= i)
 		{
-			chunk_i++;
-			continue;
+			do_pb(a, b);
+			do_rb(b, 1);
+			++i;
 		}
-		// printf("---- Selected move: ----\n");
-		execute_moves(moves, a, b);
-		free_moves(moves);
+		else if ((*a)->correct_idx <= i + range)
+		{
+			do_pb(a, b);
+			++i;
+		}
+		else if (check_opposite(*a))
+			do_rra(a, 1);
+		else
+			do_ra(a, 1); // about 2200
 	}
 	push_back_to_a(a, b);
 	free_data(data);
-	// if (is_sorted(a))
-	// 	printf("Success!\n");
-	// else
-	// 	printf("Sucks\n");
 }
 
 /**
