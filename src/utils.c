@@ -37,6 +37,23 @@ int	ft_issign(char c)
 }
 
 /**
+ * - Checks if stack is sorted
+ */
+int	is_sorted(t_stack **a)
+{
+	t_stack	*cursor;
+
+	cursor = *a;
+	while (cursor != NULL && cursor->next != NULL)
+	{
+		if (cursor->correct_idx > cursor->next->correct_idx)
+			return (0);
+		cursor = cursor->next;
+	}
+	return (1);
+}
+
+/**
  * - Function that writes `"Error\n"` to STDERR.
  * - Frees the allocated stacks.
  * - End: terminates the program with `exit(EXIT_FAILURE)`

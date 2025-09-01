@@ -27,7 +27,6 @@ t_stack	*stack_new_node(int number, t_stack *prev)
 		return (NULL);
 	node->number = number;
 	node->correct_idx = 0;
-	node->chunk_id = 0;
 	node->next = NULL;
 	if (!prev)
 		node->prev = NULL;
@@ -92,4 +91,19 @@ int	get_stack_size(t_stack **stack)
 		count++;
 	}
 	return (count);
+}
+
+/**
+ * - Get stack bottom node
+ */
+t_stack *get_bottom_node(t_stack **stack)
+{
+	t_stack *current;
+
+	if (!stack || !*stack)
+		return (NULL);
+	current = *stack;
+	while (current && current->next)
+		current = current->next;
+	return (current);
 }
