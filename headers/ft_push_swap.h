@@ -21,24 +21,11 @@ typedef struct s_stack
 	struct s_stack	*next;
 }					t_stack;
 
-typedef enum e_actions
-{
-	RA,
-	RB,
-	RR,
-	RRA,
-	RRB,
-	RRR,
-	PB,
-	PA,
-	SA,
-	SB,
-	SS
-}	t_actions;
-
 typedef struct s_moves
 {
-	t_actions		*seq;
+	int				both;
+	int				rotates_b;
+	int				rotates_a;
 	unsigned int	total_moves;
 }					t_moves;
 
@@ -66,9 +53,13 @@ void	do_ss(t_stack **stack_a, t_stack **stack_b);
 void	do_rr(t_stack **stack_a, t_stack **stack_b);
 void	do_rrr(t_stack **stack_a, t_stack **stack_b);
 
-// optimize.c
+/* moves_do.c */
 
 void	execute_moves(t_moves *moves, t_stack **a, t_stack **b);
+
+/* moves_init.c */
+
+t_moves	*init_moves(int size);
 
 /* parsing.c */
 
@@ -77,6 +68,11 @@ int		are_valid_args(char **av);
 int		parse_and_push(t_stack **stack_a, char *s, int *j);
 void	fill_stack_a(t_stack **stack_a, int ac, char **av);
 void	check_and_alloc(t_stack **stack_a, int num);
+
+/* push_swap utils */
+
+int		find_min_pos(t_stack **stack);
+int		find_target_pos_a(t_stack **a, int value);
 
 /* push_swap.c */
 
@@ -95,11 +91,11 @@ void	quicksort(int *arr, int low, int high);
 
 /* stack.c */
 
-int		get_stack_size(t_stack **stack);
+int		stack_size(t_stack **stack);
 void	stack_push_bottom(t_stack **stack, t_stack *node);
 void	stack_push_top(t_stack **stack, t_stack *node);
 t_stack	*stack_new_node(int number, t_stack *prev);
-t_stack	*get_bottom_node(t_stack **stack);
+t_stack	*get_smallest_node(t_stack **stack);
 
 /* utils.c */
 

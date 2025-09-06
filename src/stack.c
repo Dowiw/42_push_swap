@@ -78,10 +78,10 @@ void	stack_push_top(t_stack **stack, t_stack *node)
 /**
  * - Returns stack size in int
  */
-int	get_stack_size(t_stack **stack)
+int	stack_size(t_stack **stack)
 {
-	int		count;
-	t_stack	*cursor;
+	int			count;
+	t_stack		*cursor;
 
 	count = 0;
 	cursor = *stack;
@@ -91,19 +91,4 @@ int	get_stack_size(t_stack **stack)
 		count++;
 	}
 	return (count);
-}
-
-/**
- * - Get stack bottom node
- */
-t_stack *get_bottom_node(t_stack **stack)
-{
-	t_stack *current;
-
-	if (!stack || !*stack)
-		return (NULL);
-	current = *stack;
-	while (current && current->next)
-		current = current->next;
-	return (current);
 }

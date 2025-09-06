@@ -1,0 +1,9 @@
+# binaries
+push_swap
+*.o
+
+# script file residue
+traces.txt
+
+# ignore future changes
+.vscode
