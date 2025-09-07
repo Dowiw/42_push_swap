@@ -78,3 +78,13 @@ void	error_free_exit(t_stack **stack_a, t_stack **stack_b)
 	write(STDERR_FILENO, "Error\n", 6);
 	exit(EXIT_FAILURE);
 }
+
+/**
+ * - Get absolute value of a number
+ */
+int	ft_abs(int num)
+{
+	if (num < 0)
+		return (num * -1);
+	return (num);
+}
