@@ -4,6 +4,7 @@ push_swap
 
 # script file residue
 traces.txt
+0
 
 # ignore future changes
 .vscode

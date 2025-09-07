@@ -11,26 +11,19 @@
 /* ************************************************************************** */
 
 #include "ft_push_swap.h"
-#include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <stdio.h>
-
-int	ft_abs(int num)
-{
-	if (num > 0)
-		return (num * -1);
-	return (num);
-}
 
 /**
+ * - For every target in stack a from position b:
+ * 	find the moves taken for ra/rra and rb/rrb
  */
 t_moves	calculate_moves(int target_a, int pos_b, int size_a, int size_b)
 {
 	t_moves	temp;
-	int	moves_a;
-	int	moves_b;
-	int	common;
+	int		moves_a;
+	int		moves_b;
+	int		common;
 
 	moves_a = 0;
 	moves_b = 0;
@@ -71,7 +64,6 @@ t_moves	find_best_moves(t_stack **a, t_stack **b)
 	best.rotates_a = 0;
 	best.both = 0;
 	best.total_moves = INT_MAX;
-	temp.both = 0; temp.rotates_a = 0; temp.rotates_b = 0; temp.total_moves = 0;
 	current = *b;
 	while (current)
 	{
@@ -85,20 +77,6 @@ t_moves	find_best_moves(t_stack **a, t_stack **b)
 	return (best);
 }
 
-void	execute_moves(t_moves *moves, t_stack **a, t_stack **b)
-{
-    int ra = moves->rotates_a;
-    int rb = moves->rotates_b;
-    int both = moves->both;
-
-    while (both > 0) { do_rr(a, b); ra--; rb--; both--; }
-    while (both < 0) { do_rrr(a, b); ra++; rb++; both++; }
-    while (ra > 0) { do_ra(a, 1); ra--; }
-    while (ra < 0) { do_rra(a, 1); ra++; }
-    while (rb > 0) { do_rb(b, 1); rb--; }
-    while (rb < 0) { do_rrb(b, 1); rb++; }
-}
-
 /**
  * - Perform Turk when pushing back to a
  */
@@ -108,62 +86,8 @@ void	push_back_to_a(t_stack **a, t_stack **b)
 	int		min_pos;
 	t_moves	best_moves;
 
-	while (stack_size(b) > 0) // To debug
+	while (stack_size(b) > 0)
 	{
-		// t_moves	temp; temp.rotates_a = 0; temp.rotates_b = 0; temp.both = 0; temp.total_moves = 0;
-		// best_moves.rotates_a = 0; best_moves.rotates_b = 0; best_moves.both = 0; best_moves.total_moves = INT_MAX;
-		// int size_a = stack_size(a);
-		// int size_b = stack_size(b);
-		// int pos = 0;
-
-		// // super greedy, get every single move for every single b
-		// for (t_stack *cur = *b; cur; cur = cur->next, pos++)
-		// {
-		// 	int target_pos_a = find_target_pos_a(a, cur->number);
-		// 	temp.rotates_a = (target_pos_a <= size_a / 2) ? target_pos_a : target_pos_a - size_a;
-		// 	temp.rotates_b = (pos <= size_b / 2) ? pos : pos - size_b;
-		// 	temp.both = 0;
-		// 	if (temp.rotates_a > 0 && temp.rotates_b > 0)
-		// 		temp.both = (temp.rotates_a < temp.rotates_b) ? temp.rotates_a : temp.rotates_b;
-		// 	else if (temp.rotates_a < 0 && temp.rotates_b < 0)
-		// 		temp.both = (temp.rotates_a > temp.rotates_b) ? temp.rotates_a : temp.rotates_b;
-		// 	temp.total_moves = abs(temp.rotates_a) + abs(temp.rotates_b) - abs(temp.both);
-		// 	if (temp.total_moves < best_moves.total_moves)
-		// 	{
-		// 		best_moves.total_moves = temp.total_moves;
-		// 		best_moves.rotates_a = temp.rotates_a;
-		// 		best_moves.rotates_b = temp.rotates_b;
-		// 		best_moves.both = temp.both;
-		// 	}
-		// }
-
-		// int best_common = best_moves.both;
-		// int best_moves_a = best_moves.rotates_a;
-		// int	best_moves_b = best_moves.rotates_b;
-
-		// // Perform common rotations
-		// while (best_common > 0)
-		// {
-		// 	do_rr(a, b);
-		// 	best_moves_a--;
-		// 	best_moves_b--;
-		// 	best_common--;
-		// }
-		// while (best_common < 0)
-		// {
-		// 	do_rrr(a, b);
-		// 	best_moves_a++;
-		// 	best_moves_b++;
-		// 	best_common++;
-		// }
-		// // Finish remaining rotations for A
-		// while (best_moves_a > 0) { do_ra(a, 1); best_moves_a--; }
-		// while (best_moves_a < 0) { do_rra(a, 1); best_moves_a++; }
-		// // Finish remaining rotations for B
-		// while (best_moves_b > 0) { do_rb(b, 1); best_moves_b--; }
-		// while (best_moves_b < 0) { do_rrb(b, 1); best_moves_b++; }
-
-		// Push from B to A
 		best_moves = find_best_moves(a, b);
 		execute_moves(&best_moves, a, b);
 		do_pa(b, a);
@@ -182,29 +106,12 @@ void	push_back_to_a(t_stack **a, t_stack **b)
 	}
 }
 
-int	check_opposite(t_stack *a)
-{
-	int	s_size;
-	int	count;
-	int	diff;
-
-	diff = 0;
-	count = 0;
-	s_size = stack_size(&a);
-	while (a && a->next)
-	{
-		diff = a->correct_idx - a->next->correct_idx;
-		if (diff == 2 || diff == 3 || diff == 4)
-			count++;
-		a = a->next;
-	}
-	if (count * 10 >= s_size * 6)
-		return (1);
-	return (0);
-}
-
 /**
  * - Heart
+ * - Logic to stack a: if a number is below i then put bottom
+ * 	else if, between i and gap, put the number on top
+ * 	else if, most of the remaining nums in a are descending, do rra
+ * 	else, ra
  */
 void	large_sort(t_stack **a, t_stack **b)
 {
@@ -212,21 +119,21 @@ void	large_sort(t_stack **a, t_stack **b)
 	unsigned int	i;
 
 	i = 0;
-	gap = 40;
+	gap = 100;
 	while (stack_size(a) > 1)
 	{
 		if ((*a)->correct_idx <= i)
 		{
 			do_pb(a, b);
 			do_rb(b, 1);
-			++i;
+			i++;
 		}
 		else if ((*a)->correct_idx <= i + gap)
 		{
 			do_pb(a, b);
-			++i;
+			i++;
 		}
-		else if (check_opposite(*a))
+		else if (check_opposite(a))
 			do_rra(a, 1);
 		else
 			do_ra(a, 1);

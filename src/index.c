@@ -52,7 +52,7 @@ void	get_index(t_stack **stack_a)
 	int		*arr;
 	t_stack	*cursor;
 
-	size = get_stack_size(stack_a);
+	size = stack_size(stack_a);
 	i = 0;
 	cursor = *stack_a;
 	arr = (int *)malloc(sizeof(int) * size);

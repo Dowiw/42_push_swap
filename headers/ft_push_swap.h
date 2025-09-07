@@ -53,13 +53,9 @@ void	do_ss(t_stack **stack_a, t_stack **stack_b);
 void	do_rr(t_stack **stack_a, t_stack **stack_b);
 void	do_rrr(t_stack **stack_a, t_stack **stack_b);
 
-/* moves_do.c */
+/* execute_moves.c */
 
 void	execute_moves(t_moves *moves, t_stack **a, t_stack **b);
-
-/* moves_init.c */
-
-t_moves	*init_moves(int size);
 
 /* parsing.c */
 
@@ -71,8 +67,11 @@ void	check_and_alloc(t_stack **stack_a, int num);
 
 /* push_swap utils */
 
+int		check_opposite(t_stack **a);
 int		find_min_pos(t_stack **stack);
 int		find_target_pos_a(t_stack **a, int value);
+t_stack	*get_smallest_node(t_stack **stack);
+t_stack	*get_largest_node(t_stack **stack);
 
 /* push_swap.c */
 
@@ -102,6 +101,7 @@ t_stack	*get_smallest_node(t_stack **stack);
 int		ft_isdigit(char c);
 int		ft_issign(char c);
 int		is_sorted(t_stack **a);
+int		ft_abs(int num);
 void	error_free_exit(t_stack **stack_a, t_stack **stack_b);
 
 #endif

@@ -96,43 +96,52 @@ int	find_min_pos(t_stack **stack)
  */
 int	find_target_pos_a(t_stack **a, int value)
 {
-    t_stack *cur = *a;
-    t_stack *largest = *a;
-    t_stack *smallest = *a;
-    int pos = 0, best_pos = 0, i = 0, size = stack_size(a);
+	int		smallest;
+	int		largest;
+	int		i;
+	t_stack	*cursor;
 
-    // Find largest and smallest node
-    cur = *a;
-    while (cur)
-    {
-        if (cur->number > largest->number)
-            largest = cur;
-        if (cur->number < smallest->number)
-            smallest = cur;
-        cur = cur->next;
-    }
-
-    // If value is greater than all or less than all, put after largest
-if (value > largest->number || value < smallest->number)
-{
-    cur = *a;
-    best_pos = 0;
-    while (cur && cur->number != smallest->number)
-    {
-        cur = cur->next;
-        best_pos++;
-    }
-    return best_pos;
+	cursor = *a;
+	smallest = get_smallest_node(a)->number;
+	largest = get_largest_node(a)->number;
+	if (value > largest || value < smallest)
+		return (find_min_pos(a));
+	i = 0;
+	while (cursor && cursor->next)
+	{
+		if (cursor->number < value && value < cursor->next->number)
+			return (i + 1);
+		cursor = cursor->next;
+		i++;
+	}
+	if (cursor && cursor->number < value && value < (*a)->number)
+		return (0);
+	return (i + 1);
 }
 
-    // Otherwise, find the first place where value fits between cur and cur->next
-    cur = *a;
-    for (i = 0; i < size; i++)
-    {
-        t_stack *next = cur->next ? cur->next : *a;
-        if (cur->number < value && value < next->number)
-            return (i + 1) % size;
-        cur = cur->next;
-    }
-    return 0;
+/**
+ * - Simple heuristic:
+ *	If 55% of the stack has numbers with close indexes, go reverse
+ */
+int	check_opposite(t_stack **a)
+{
+	int		size_a;
+	int		count;
+	int		diff;
+	t_stack	*cursor;
+
+	diff = 0;
+	count = 0;
+	size_a = stack_size(a);
+	cursor = *a;
+	while (cursor && cursor->next)
+	{
+		diff = cursor->correct_idx - cursor->next->correct_idx;
+		if (diff == 1 || diff == 2 || diff == 3 || diff == 4)
+			count++;
+		cursor = cursor->next;
+	}
+	if (count * 10 >= size_a * 5.5)
+		return (1);
+	return (0);
 }

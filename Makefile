@@ -16,7 +16,9 @@ SRC_DIR = ./src
 
 C_FILES = main.c parsing.c utils.c stack.c \
 		index.c quicksort.c b_moves.c a_moves.c \
-		push_swap.c small_sort.c both_moves.c
+		push_swap.c small_sort.c both_moves.c \
+		push_swap_utils.c execute_moves.c
+
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
 
 OBJ = $(SRC:.c=.o)
@@ -33,6 +35,8 @@ $(NAME): $(OBJ)
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -I$(INCLUDES) -c $< -o $@
+
+bonus: 
 
 clean:
 	rm -f $(OBJ)
