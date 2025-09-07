@@ -49,8 +49,8 @@ void	sort_four(t_stack **a, t_stack **b)
 	cursor = *a;
 	while (cursor->correct_idx != min)
 	{
-		do_ra(a, 1);
 		cursor = cursor->next;
+		do_ra(a, 1);
 	}
 	do_pb(a, b);
 	sort_three(a);
