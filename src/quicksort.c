@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_push_swap.h"
-
 static int	partition(int *arr, int low, int high);
 
 /**
