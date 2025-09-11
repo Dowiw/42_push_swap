@@ -70,6 +70,9 @@ Pushing back to A uses ayogun's turk of determining all the moves for every numb
 
 And then rotate the smallest number back to the top.
 
+![100 numbers result](resources/100.png)
+![500 numbers result](resources/500.png)
+
 [Video on 500 to 1](resources/500to1.mp4)
 
 ## Huge thanks and references
@@ -109,4 +112,4 @@ std::unique_ptr<FILE, int(*)(FILE*)> pipe(popen(command.c_str(), "r"), static_ca
 
 Thanks to everyone who contributed ideas and resources on push_swap.
 
-> Made in C
+> Made in C by kmonjard
