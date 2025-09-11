@@ -6,7 +6,7 @@
 /*   By: kmonjard <kmonjard@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 22:05:25 by kmonjard          #+#    #+#             */
-/*   Updated: 2025/09/07 23:56:27 by kmonjard         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:19:12 by kmonjard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	execute_remaining(int ra, int rb, t_stack **a, t_stack **b)
 }
 
 /**
- * - Execute moves based on given moves
+ * - Execute moves based on given moves structure
  */
 void	execute_moves(t_moves *moves, t_stack **a, t_stack **b)
 {
@@ -53,14 +53,14 @@ void	execute_moves(t_moves *moves, t_stack **a, t_stack **b)
 	both = moves->both;
 	while (both > 0)
 	{
-		do_rr(a, b);
+		do_rr(a, b, 1);
 		ra--;
 		rb--;
 		both--;
 	}
 	while (both < 0)
 	{
-		do_rrr(a, b);
+		do_rrr(a, b, 1);
 		ra++;
 		rb++;
 		both++;
