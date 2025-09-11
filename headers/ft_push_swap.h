@@ -36,22 +36,22 @@ void	get_index(t_stack **stack_a);
 /* a_moves.c */
 
 void	do_sa(t_stack **stack_a, int bool);
-void	do_pa(t_stack **stack_b, t_stack **stack_a);
+void	do_pa(t_stack **stack_b, t_stack **stack_a, int bool);
 void	do_ra(t_stack **stack_a, int bool);
 void	do_rra(t_stack **stack_a, int bool);
 
 /* b_moves.c */
 
 void	do_sb(t_stack **stack_b, int bool);
-void	do_pb(t_stack **stack_a, t_stack **stack_b);
+void	do_pb(t_stack **stack_a, t_stack **stack_b, int bool);
 void	do_rb(t_stack **stack_b, int bool);
 void	do_rrb(t_stack **stack_b, int bool);
 
 /* both_moves.c */
 
-void	do_ss(t_stack **stack_a, t_stack **stack_b);
-void	do_rr(t_stack **stack_a, t_stack **stack_b);
-void	do_rrr(t_stack **stack_a, t_stack **stack_b);
+void	do_ss(t_stack **stack_a, t_stack **stack_b, int bool);
+void	do_rr(t_stack **stack_a, t_stack **stack_b, int bool);
+void	do_rrr(t_stack **stack_a, t_stack **stack_b, int bool);
 
 /* execute_moves.c */
 
@@ -94,7 +94,7 @@ int		stack_size(t_stack **stack);
 void	stack_push_bottom(t_stack **stack, t_stack *node);
 void	stack_push_top(t_stack **stack, t_stack *node);
 t_stack	*stack_new_node(int number, t_stack *prev);
-t_stack	*get_smallest_node(t_stack **stack);
+void	free_stacks(t_stack **stack_a, t_stack **stack_b);
 
 /* utils.c */
 
