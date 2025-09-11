@@ -37,7 +37,8 @@ int	ft_issign(char c)
 }
 
 /**
- * - Checks if stack is sorted
+ * - Checks if stack is sorted:
+ * 	returns 1 if true, 0 if false
  */
 int	is_sorted(t_stack **a)
 {
