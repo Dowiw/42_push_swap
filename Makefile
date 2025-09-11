@@ -11,6 +11,7 @@
 # **************************************************************************** #
 
 NAME = push_swap
+BONUS = checker
 
 SRC_DIR = ./src
 
@@ -19,7 +20,14 @@ C_FILES = main.c parsing.c utils.c stack.c \
 		push_swap.c small_sort.c both_moves.c \
 		push_swap_utils.c execute_moves.c
 
+C_BONUS = bonus/checker.c bonus/get_next_line.c bonus/get_next_line_utils.c \
+		a_moves.c b_moves.c both_moves.c index.c parsing.c \
+		quicksort.c stack.c utils.c
+
 SRC = $(addprefix $(SRC_DIR)/, $(C_FILES))
+
+BONUS_SRC = $(addprefix $(SRC_DIR)/, $(C_BONUS))
+BONUS_OBJ = $(BONUS_SRC:.c=.o)
 
 OBJ = $(SRC:.c=.o)
 
@@ -36,13 +44,14 @@ $(NAME): $(OBJ)
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -I$(INCLUDES) -c $< -o $@
 
-bonus: 
+bonus: $(BONUS_OBJ)
+	$(CC) $(CFLAGS) -I$(INCLUDES) $(BONUS_OBJ) -o $(BONUS)
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) $(BONUS_OBJ)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(BONUS)
 
 re: fclean all
 
