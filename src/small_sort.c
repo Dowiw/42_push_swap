@@ -11,8 +11,10 @@
 /* ************************************************************************** */
 
 #include "ft_push_swap.h"
-#include <unistd.h>
 
+/**
+ * - Sort three numbers with lowest moves
+ */
 void	sort_three(t_stack **a)
 {
 	int	first;
@@ -40,6 +42,9 @@ void	sort_three(t_stack **a)
 		do_rra(a, 1);
 }
 
+/**
+ * - Sort four numbers with lowest moves
+ */
 void	sort_four(t_stack **a, t_stack **b)
 {
 	t_stack				*cursor;
@@ -52,11 +57,14 @@ void	sort_four(t_stack **a, t_stack **b)
 		cursor = cursor->next;
 		do_ra(a, 1);
 	}
-	do_pb(a, b);
+	do_pb(a, b, 1);
 	sort_three(a);
-	do_pa(b, a);
+	do_pa(b, a, 1);
 }
 
+/**
+ * - Sort five numbers with lowest moves
+ */
 void	sort_five(t_stack **a, t_stack **b)
 {
 	unsigned int		min;
@@ -72,7 +80,7 @@ void	sort_five(t_stack **a, t_stack **b)
 		cursor = *a;
 		if (cursor->correct_idx == min || cursor->correct_idx == second_min)
 		{
-			do_pb(a, b);
+			do_pb(a, b, 1);
 			nums_pushed++;
 		}
 		else
@@ -82,6 +90,6 @@ void	sort_five(t_stack **a, t_stack **b)
 	cursor = *b;
 	if (cursor->correct_idx < cursor->next->correct_idx)
 		do_sb(b, 1);
-	do_pa(b, a);
-	do_pa(b, a);
+	do_pa(b, a, 1);
+	do_pa(b, a, 1);
 }
