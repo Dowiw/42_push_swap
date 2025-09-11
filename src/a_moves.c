@@ -40,7 +40,7 @@ void	do_sa(t_stack **stack_a, int bool)
 /**
  * - Push the top of stack b to stack a
  */
-void	do_pa(t_stack **stack_b, t_stack **stack_a)
+void	do_pa(t_stack **stack_b, t_stack **stack_a, int bool)
 {
 	t_stack	*top_b;
 
@@ -56,7 +56,8 @@ void	do_pa(t_stack **stack_b, t_stack **stack_a)
 		*stack_a = top_b;
 	else
 		stack_push_top(stack_a, top_b);
-	write(1, "pa\n", 3);
+	if (bool)
+		write(1, "pa\n", 3);
 }
 
 /**
