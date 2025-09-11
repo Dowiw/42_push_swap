@@ -1,5 +1,7 @@
 # binaries
 push_swap
+checker
+checker_linux
 *.o
 
 # script file residue
