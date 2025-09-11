@@ -60,7 +60,7 @@ git submodule update --init --recursive
 
 ## Results
 
-![Demo Animation](resources/shuffled.gif)
+![Demo Animation](resources/demo.gif)
 
 The logic was largely based on jeongble and ayogun's approach to the problem.
 
