@@ -39,7 +39,7 @@ void	do_sb(t_stack **stack_b, int bool)
 /**
  * - Push the top of stack a to stack b
  */
-void	do_pb(t_stack **stack_a, t_stack **stack_b)
+void	do_pb(t_stack **stack_a, t_stack **stack_b, int bool)
 {
 	t_stack	*top_a;
 
@@ -55,7 +55,8 @@ void	do_pb(t_stack **stack_a, t_stack **stack_b)
 		*stack_b = top_a;
 	else
 		stack_push_top(stack_b, top_a);
-	write(1, "pb\n", 3);
+	if (bool)
+		write(1, "pb\n", 3);
 }
 
 /**
