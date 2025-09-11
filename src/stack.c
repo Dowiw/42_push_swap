@@ -92,3 +92,25 @@ int	stack_size(t_stack **stack)
 	}
 	return (count);
 }
+
+/**
+ * - Free both stacks
+ */
+void	free_stacks(t_stack **stack_a, t_stack **stack_b)
+{
+	t_stack	*cursor;
+
+	cursor = NULL;
+	while (stack_a && *stack_a)
+	{
+		cursor = (*stack_a)->next;
+		free(*stack_a);
+		*stack_a = cursor;
+	}
+	while (stack_b && *stack_b)
+	{
+		cursor = (*stack_b)->next;
+		free(*stack_b);
+		*stack_b = cursor;
+	}
+}
