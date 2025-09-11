@@ -90,7 +90,7 @@ void	push_back_to_a(t_stack **a, t_stack **b)
 	{
 		best_moves = find_best_moves(a, b);
 		execute_moves(&best_moves, a, b);
-		do_pa(b, a);
+		do_pa(b, a, 1);
 	}
 	min_pos = find_min_pos(a);
 	i = 0;
@@ -124,13 +124,13 @@ void	large_sort(t_stack **a, t_stack **b)
 	{
 		if ((*a)->correct_idx <= i)
 		{
-			do_pb(a, b);
+			do_pb(a, b, 1);
 			do_rb(b, 1);
 			i++;
 		}
 		else if ((*a)->correct_idx <= i + gap)
 		{
-			do_pb(a, b);
+			do_pb(a, b, 1);
 			i++;
 		}
 		else if (check_opposite(a))
